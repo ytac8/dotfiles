@@ -263,19 +263,11 @@
 [[plugins]]
     repo = 'Shougo/vimfiler.vim'
     hook_add ='''
-        \ "autoload": {
-        \   "commands": ["VimFilerTab", "VimFiler", "VimFilerExplorer"],
-        \   "mappings": ['<Plug>(vimfiler_switch)'],
-        \   "explorer": 1,
-        \ }}
-        nnoremap <Leader>e :VimFilerExplorer<CR>
+        nnoremap <space>vf :VimFilerExplorer<CR>
         " close vimfiler automatically when there are only vimfiler open
         autocmd MyAutoCmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'vimfiler') | q | endif
-        let s:hooks = neobundle#get_hooks("vimfiler")
-        function! s:hooks.on_source(bundle)
           let g:vimfiler_as_default_explorer = 1
           let g:vimfiler_enable_auto_cd = 1
-          
           " .から始まるファイルおよび.pycで終わるファイルを不可視パターンに
           let g:vimfiler_ignore_pattern = "\%(^\..*\|\.pyc$\)"
         
@@ -289,7 +281,6 @@
             " overwrite C-l
             nmap <buffer> <C-l> <C-w>l
           endfunction
-        endfunction
     '''
 
 [[plugins]]
