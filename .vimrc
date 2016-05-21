@@ -16,6 +16,8 @@ set noswapfile
 set nobackup
 set smarttab
 set expandtab
+set tabstop=4
+set shiftwidth=4
 set virtualedit=block
 set wrapscan
 
@@ -135,9 +137,8 @@ function! s:ChangeCurrentDir(directory, bang)
     endif
 endfunction
 
-
-
-
+"deoplete setting
+let g:deoplete#enable_at_startup = 1
 
 " dein settings {{{
 " dein.vimのディレクトリ
