@@ -144,10 +144,6 @@ function! s:ChangeCurrentDir(directory, bang)
 endfunction
 " }}}
 
-"vimfiler settings
-" 自動起動
-autocmd VimEnter * VimFiler -split -simple -winwidth=30 -no-quit
-
 "deoplete setting
 let g:deoplete#enable_at_startup = 1
 
