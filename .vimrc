@@ -1,4 +1,4 @@
-" neccesary settings
+" neccesary settings {{{
 " release autogroup in MyAutoCmd
 augroup MyAutoCmd
     autocmd!
@@ -25,7 +25,8 @@ set ignorecase          " 大文字小文字を区別しない
 set smartcase           " 検索文字に大文字がある場合は大文字小文字を区別
 set incsearch           " インクリメンタルサーチ
 set hlsearch            " 検索マッチテキストをハイライト
-set nohlsearch
+set foldenable          "折りたたみを有効にする
+set ruler               " カーソルの現在地表示
 
 " バックスラッシュやクエスチョンを状況に合わせ自動的にエスケープ
 cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
@@ -59,7 +60,6 @@ set list                " 不可視文字の可視化
 set number              " 行番号の表示
 set wrap                " 長いテキストの折り返し
 set textwidth=0         " 自動的に改行が入るのを無効化
-set colorcolumn=80      " その代わり80文字目にラインを入れる
 set t_vb=
 set novisualbell
 
@@ -96,6 +96,12 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+
+" Ctrl + hjkl でウィンドウ間を移動
+inoremap <C-h> <C-w>h
+inoremap <C-j> <C-w>j
+inoremap <C-k> <C-w>k
+inoremap <C-l> <C-w>l
 
 " Shift + 矢印でウィンドウサイズを変更
 nnoremap <S-Left>  <C-w><<CR>
@@ -136,6 +142,11 @@ function! s:ChangeCurrentDir(directory, bang)
         pwd
     endif
 endfunction
+" }}}
+
+"vimfiler settings
+" 自動起動
+autocmd VimEnter * VimFiler -split -simple -winwidth=30 -no-quit
 
 "deoplete setting
 let g:deoplete#enable_at_startup = 1
