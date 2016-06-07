@@ -8,6 +8,8 @@
         inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
         inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>" 
     '''
+[[plugins]]
+    repo = 'zchee/deoplete-jedi'
 
 [[plugins]]
     repo = 'Shougo/unite.vim'
@@ -152,7 +154,15 @@
     hook_add = '''
         nnoremap = <silent> <space>qr :<C-u>QuickRun<CR>
     '''
-
+[[plugins]]
+    repo = 'kevinw/pyflakes-vim'
+    hook_add = '''
+        let g:syntastic_mode_map = {
+            \ 'mode': 'active',
+            \ 'active_filetypes': ['php', 'coffeescript', 'sh', 'vim'],
+            \ 'passive_filetypes': ['html', 'haskell', 'python']
+        \}
+    '''
 [[plugins]]
     repo = 'cohama/lexima.vim'
     on_i = '''
@@ -267,7 +277,7 @@
         let g:vimfiler_as_default_explorer = 1
         " close vimfiler automatically when there are only vimfiler open
         autocmd MyAutoCmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'vimfiler') | q | endif
-          
+          autocmd MyAutoCmd FileType vimfiler call s:vimfiler_settings()
           " vimfiler specific key mappings
           function! s:vimfiler_settings()
             " overwrite C-l
@@ -277,6 +287,10 @@
 
 [[plugins]]
     repo = 'kakkyz81/evervim'
+    hook_add = '''
+        nnoremap <space>evc :EvervimCreateNote<CR>
+        nnoremap <space>evl :EvervimNotebookList<CR>
+    '''
 
 [[plugins]]
     repo = 'tyru/open-browser.vim'

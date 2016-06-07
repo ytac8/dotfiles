@@ -20,6 +20,7 @@ set tabstop=4
 set shiftwidth=4
 set virtualedit=block
 set wrapscan
+set cursorline
 
 set ignorecase          " 大文字小文字を区別しない
 set smartcase           " 検索文字に大文字がある場合は大文字小文字を区別
@@ -72,6 +73,9 @@ nmap <silent> <Esc><Esc> :nohlsearch<CR>
 " カーソル下の単語を * で検索
 vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v, '\/'), "\n", '\\n', 'g')<CR><CR>
 
+" docstringは表示しない
+autocmd FileType python setlocal completeopt-=preview
+
 " 検索後にジャンプした際に検索単語を画面中央に持ってくる
 nnoremap n nzz
 nnoremap N Nzz
@@ -79,6 +83,9 @@ nnoremap * *zz
 nnoremap # #zz
 nnoremap g* g*zz
 nnoremap g# g#zz
+
+inoremap <C-c> <Esc>
+nnoremap <C-c> <Esc>
 
 " j, k による移動を折り返されたテキストでも自然に振る舞うように変更
 nnoremap j gj
@@ -91,17 +98,25 @@ vnoremap v $h
 nnoremap <Tab> %
 vnoremap <Tab> %
 
+"fugitive keymap
+nnoremap <space>gis <C-u>:Gstatus<CR>
+
+"quickrun keymap
+nnoremap <space>qr <C-u>:QuickRun<CR>
+
 " Ctrl + hjkl でウィンドウ間を移動
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
 
-" Ctrl + hjkl でウィンドウ間を移動
-inoremap <C-h> <C-w>h
-inoremap <C-j> <C-w>j
-inoremap <C-k> <C-w>k
-inoremap <C-l> <C-w>l
+" insert modeでのHJKL移動
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
+
+"行頭、行末の移動ショートカット
+nnoremap ,l $
+nnoremap ,h ^
 
 " Shift + 矢印でウィンドウサイズを変更
 nnoremap <S-Left>  <C-w><<CR>
@@ -116,6 +131,9 @@ nnoremap <silent> [toggle]s :setl spell!<CR>:setl spell?<CR>
 nnoremap <silent> [toggle]l :setl list!<CR>:setl list?<CR>
 nnoremap <silent> [toggle]t :setl expandtab!<CR>:setl expandtab?<CR>
 nnoremap <silent> [toggle]w :setl wrap!<CR>:setl wrap?<CR>
+
+"evervimの設定
+let g:evervim_devtoken='S=s340:U=3542e5f:E=15c4907f7c2:C=154f156c808:P=1cd:A=en-devtoken:V=2:H=a2aa8de18c7b8bc118c22678b335b622'
 
 " w!! でスーパーユーザーとして保存（sudoが使える環境限定）
 cmap w!! w !sudo tee > /dev/null %
@@ -143,6 +161,10 @@ function! s:ChangeCurrentDir(directory, bang)
     endif
 endfunction
 " }}}
+
+"nyaovim markdown用の設定
+let g:markdown_preview_auto = 1
+let g:markdown_preview_eager = 1
 
 "deoplete setting
 let g:deoplete#enable_at_startup = 1
