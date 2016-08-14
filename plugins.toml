@@ -1,4 +1,12 @@
 [[plugins]]
+    repo = 'tomasr/molokai'
+    on_event = ['VimEnter']
+    hook_add = '''
+        set background=dark
+        colorscheme molokai
+'''
+
+[[plugins]]
     repo = 'Shougo/dein.vim'
 
 [[plugins]]
@@ -17,7 +25,8 @@
         let g:unite_enable_start_insert=1
         nnoremap <silent> <space>ub :<C-u>Unite buffer<CR>
         nnoremap <silent> <space>uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-        nnoremap <silent> <space>ur :<C-u>Unite -buffer-name=register register<CR>
+        nnoremap <silent> <space>ur :<C-u>Unite file_mru buffer<CR>
+        nnoremap <silent> <space>uy :<C-u>Unite history/yank<CR>
     '''
 
 [[plugins]]
@@ -138,6 +147,9 @@
 #}}}
 
 [[plugins]]
+    repo = 'kchmck/vim-coffee-script'
+
+[[plugins]]
     repo = 'Shougo/neosnippet'
 
 [[plugins]]
@@ -202,6 +214,12 @@
     '''
 
 [[plugins]]
+    repo = 'tpope/vim-haml'
+
+[[plugins]]
+    repo = 'cakebaker/scss-syntax.vim'
+
+[[plugins]]
     repo = 'easymotion/vim-easymotion'
     hook_add = '''
         "easymotion settings
@@ -246,13 +264,6 @@
     '''
 
 [[plugins]]
-    repo = 'tomasr/molokai'
-    on_event = ['VimEnter']
-    hook_add = '''
-        set background=dark
-        colorscheme molokai
-'''
-[[plugins]]
     repo = 'scrooloose/syntastic.git'
 
 [[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
@@ -286,17 +297,13 @@
     '''
 
 [[plugins]]
-    repo = 'kakkyz81/evervim'
-    hook_add = '''
-        nnoremap <space>evc :EvervimCreateNote<CR>
-        nnoremap <space>evl :EvervimNotebookList<CR>
-    '''
-
-[[plugins]]
     repo = 'tyru/open-browser.vim'
 
 [[plugins]]
     repo = 'kannokanno/previm'
+    hook_add = '''
+        nnoremap <space>pv :PrevimOpen<CR>
+    '''
 
 #Ruby Settings
 [[plugins]]
