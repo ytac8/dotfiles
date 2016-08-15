@@ -20,6 +20,9 @@
     repo = 'zchee/deoplete-jedi'
 
 [[plugins]]
+    repo = 'Shougo/neomru.vim'
+
+[[plugins]]
     repo = 'Shougo/unite.vim'
     hook_add = '''
         let g:unite_enable_start_insert=1
@@ -68,22 +71,6 @@
         \ 'active': {
         \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
         \ },
-        \ 'component_function': {
-        \   'modified': 'LightLineModified',
-        \   'readonly': 'LightLineReadonly',
-        \   'fugitive': 'LightLineFugitive',
-        \   'filename': 'LightLineFilename',
-        \   'fileformat': 'LightLineFileformat',
-        \   'filetype': 'LightLineFiletype',
-        \   'fileencoding': 'LightLineFileencoding',
-        \   'mode': 'LightLineMode'
-        \ } ,
-        \ 'component_expand': {
-        \   'syntastic': 'SyntasticStatuslineFlag'
-        \ },
-        \ 'component_type': {
-        \   'syntastic': 'error'
-        \ }
         \ }
 
         let g:lightline.component_expand = {
@@ -149,6 +136,8 @@
 [[plugins]]
     repo = 'kchmck/vim-coffee-script'
 
+[[plugins]]
+    repo = 'leafgarland/typescript-vim'
 [[plugins]]
     repo = 'Shougo/neosnippet'
 
