@@ -16,8 +16,6 @@
         inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
         inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>" 
     '''
-[[plugins]]
-    repo = 'zchee/deoplete-jedi'
 
 [[plugins]]
     repo = 'Shougo/neomru.vim'
@@ -60,42 +58,34 @@
     repo = 'itchyny/lightline.vim'
     #lightline settings{{{
     hook_add = '''
-        set laststatus=2
-        if !has('gui_running')
-            set t_Co=256
-        endif
-
         let g:lightline = {
-        \ 'colorscheme': 'wombat',
-        \ 'mode_map': {'c': 'NORMAL'},
-        \ 'active': {
-        \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
-        \ },
-        \ }
-
-        let g:lightline.component_expand = {
-        \ 'tabs': 'lightline#tabs' } 
-        let g:lightline.component_type = {
-        \ 'tabs': 'tabsel' } 
-
-        let g:syntastic_mode_map = { 'mode': 'passive' }
-        augroup AutoSyntastic
-          autocmd!
-          autocmd BufWritePost *.c,*.cpp call s:syntastic()
-        augroup END
-        function! s:syntastic()
-          SyntasticCheck
-          call lightline#update()
-        endfunction
+            \ 'colorscheme': 'wombat',
+            \ 'mode_map': { 'c': 'NORMAL' },
+            \ 'active': {
+            \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
+            \ },
+            \ 'component_function': {
+            \   'modified': 'LightLineModified',
+            \   'readonly': 'LightLineReadonly',
+            \   'fugitive': 'LightLineFugitive',
+            \   'filename': 'LightLineFilename',
+            \   'fileformat': 'LightLineFileformat',
+            \   'filetype': 'LightLineFiletype',
+            \   'fileencoding': 'LightLineFileencoding',
+            \   'mode': 'LightLineMode',
+            \ },
+            \ 'separator': { 'left': '⮀', 'right': '⮂' },
+            \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
+            \ }
 
         function! LightLineModified()
           return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
         endfunction
-
+        
         function! LightLineReadonly()
-          return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
+          return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? '⭤' : ''
         endfunction
-
+        
         function! LightLineFilename()
           return ('' != LightLineReadonly() ? LightLineReadonly() . ' ' : '') .
                 \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
@@ -104,32 +94,34 @@
                 \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
                 \ ('' != LightLineModified() ? ' ' . LightLineModified() : '')
         endfunction
-
+        
         function! LightLineFugitive()
-          try
-            if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
-              return fugitive#head()
-            endif
-          catch
-          endtry
+          if &ft !~? 'vimfiler\|gundo' && exists("*fugitive#head")
+            let branch = fugitive#head()
+            return branch !=# '' ? '⭠ '.branch : ''
+          endif
           return ''
         endfunction
-
+        
         function! LightLineFileformat()
           return winwidth(0) > 70 ? &fileformat : ''
         endfunction
-
+        
         function! LightLineFiletype()
-          return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+          return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
         endfunction
-
+        
         function! LightLineFileencoding()
-          return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+          return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+        endfunction
+        
+        function! LightLineMode()
+          return winwidth(0) > 60 ? lightline#mode() : ''
         endfunction
 
-        function! LightLineMode() 
-            return winwidth(0) > 60 ? lightline#mode() : ''
-        endfunction
+        let g:unite_force_overwrite_statusline = 0
+        let g:vimfiler_force_overwrite_statusline = 0
+        let g:vimshell_force_overwrite_statusline = 0
     '''
 #}}}
 
@@ -155,6 +147,10 @@
     hook_add = '''
         nnoremap = <silent> <space>qr :<C-u>QuickRun<CR>
     '''
+
+[[plugins]]
+    repo = 'nathanaelkane/vim-indent-guides'
+
 [[plugins]]
     repo = 'kevinw/pyflakes-vim'
     hook_add = '''
@@ -306,6 +302,9 @@
 [[plugins]]
     repo = 'davidhalter/jedi-vim'
     on_ft = ['python', 'python3', 'djangohtml']
+
+[[plugins]]
+    repo = 'zchee/deoplete-jedi'
 
 #NyaoVim Settings
 [[plugins]]

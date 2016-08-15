@@ -27,6 +27,9 @@ set incsearch           " インクリメンタルサーチ
 set hlsearch            " 検索マッチテキストをハイライト
 set foldenable          "折りたたみを有効にする
 set ruler               " カーソルの現在地表示
+scriptencoding utf-8
+set encoding=utf-8
+set guifont=Ricty\ 10
 
 " バックスラッシュやクエスチョンを状況に合わせ自動的にエスケープ
 cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
@@ -123,6 +126,9 @@ vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v, '\/'), "\n", '\\n', 'g')<C
 
 " docstringは表示しない
 autocmd FileType python setlocal completeopt-=preview
+
+" python3 support
+let g:python3_host_prog = expand('$HOME') . '/.pyenv/versions/miniconda3-4.0.5/bin/python'
 
 " 検索後にジャンプした際に検索単語を画面中央に持ってくる
 nnoremap n nzz
