@@ -58,6 +58,9 @@
     repo = 'tpope/vim-commentary'
 
 [[plugins]]
+    repo = 'tpope/vim-rsi'
+
+[[plugins]]
     repo = 'itchyny/lightline.vim'
     #lightline settings{{{
     hook_add = '''
@@ -293,6 +296,9 @@
     hook_add = '''
         nnoremap <space>pv :PrevimOpen<CR>
     '''
+
+[[plugins]]
+    repo = 'tpope/vim-endwise'
 
 #Ruby Settings
 [[plugins]]
