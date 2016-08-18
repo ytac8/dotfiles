@@ -52,6 +52,9 @@ set backspace=indent,eol,start
 "shift o で空白行を挿入
 nnoremap O :<C-u>call append(expand('.'), '')<Cr>j
 
+"map macro to Q
+nnoremap Q q
+
 " クリップボードをデフォルトのレジスタとして指定。後にYankRingを使うので
 " 'unnamedplus'が存在しているかどうかで設定を分ける必要がある
 if has('unnamedplus')

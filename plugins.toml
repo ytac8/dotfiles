@@ -307,6 +307,11 @@
 
 [[plugins]]
     repo = 'osyo-manga/vim-monster'
+    on_ft = ['ruby']
+
+[[plugins]]
+    repo = 'tpope/vim-rails'
+    on_ft = ['ruby']
 
 #python settings
 [[plugins]]
