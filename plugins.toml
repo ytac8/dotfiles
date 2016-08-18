@@ -269,16 +269,9 @@
 [[plugins]]
     repo = 'Shougo/vimfiler.vim'
     hook_add ='''
-        nnoremap <space>vf :VimFiler -split -simple -winwidth=40 -no-quit<CR>
+        nnoremap <space>vf :VimFiler<CR>
         let g:vimfiler_as_default_explorer = 1
-        " close vimfiler automatically when there are only vimfiler open
-        autocmd MyAutoCmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'vimfiler') | q | endif
-          autocmd MyAutoCmd FileType vimfiler call s:vimfiler_settings()
-          " vimfiler specific key mappings
-          function! s:vimfiler_settings()
-            " overwrite C-l
-            nmap <buffer> <C-l> <C-w>l
-          endfunction
+        let g:vimfiler_edit_action = 'tabopen'
     '''
 
 [[plugins]]
@@ -302,6 +295,9 @@
 [[plugins]]
     repo = 'davidhalter/jedi-vim'
     on_ft = ['python', 'python3', 'djangohtml']
+    hook_add = '''
+        let g:jedi#force_py_version=3
+    '''
 
 [[plugins]]
     repo = 'zchee/deoplete-jedi'
