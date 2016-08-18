@@ -27,7 +27,6 @@
         nnoremap <silent> <space>ub :<C-u>Unite buffer<CR>
         nnoremap <silent> <space>uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
         nnoremap <silent> <space>ur :<C-u>Unite file_mru buffer<CR>
-        nnoremap <silent> <space>uy :<C-u>Unite history/yank<CR>
     '''
 
 [[plugins]]
@@ -54,6 +53,10 @@
             \ <buffer><silent><expr><C-d>
             \ vimshell#get_cur_text()=='' ? "\<Esc>\<Plug>(vimshell_exit)" : "\<Del>"
     '''
+
+[[plugins]]
+    repo = 'tpope/vim-commentary'
+
 [[plugins]]
     repo = 'itchyny/lightline.vim'
     #lightline settings{{{
@@ -203,6 +206,14 @@
 
 [[plugins]]
     repo = 'cakebaker/scss-syntax.vim'
+
+[[plugins]]
+    repo = 'haya14busa/incsearch.vim'
+    hook_add = '''
+        map /  <Plug>(incsearch-forward)
+        map ?  <Plug>(incsearch-backward)
+        map g/ <Plug>(incsearch-stay)
+    '''
 
 [[plugins]]
     repo = 'easymotion/vim-easymotion'
