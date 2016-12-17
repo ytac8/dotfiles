@@ -79,8 +79,7 @@ function! s:SID_PREFIX()
   return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSID_PREFIX$')
 endfunction
 
-" Set tabline.
-function! s:my_tabline()  "{{{
+" Set tabline.  function! s:my_tabline()  "{{{
   let s = ''
   for i in range(1, tabpagenr('$'))
     let bufnrs = tabpagebuflist(i)
@@ -133,7 +132,7 @@ vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v, '\/'), "\n", '\\n', 'g')<C
 autocmd FileType python setlocal completeopt-=preview
 
 " python3 support
-let g:python3_host_prog = expand('$HOME') . '/.pyenv/versions/miniconda3-4.0.5/bin/python'
+let g:python3_host_prog = expand('$HOME') . '/.pyenv/versions/miniconda3-4.2.0/bin/python'
 
 " 検索後にジャンプした際に検索単語を画面中央に持ってくる
 nnoremap n nzz
