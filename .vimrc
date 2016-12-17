@@ -9,9 +9,7 @@ if &compatible
 endif
 
 filetype plugin indent on
-
 syntax enable
-set t_Co=256
 set fileformats=unix
 set nowritebackup
 set noswapfile
@@ -32,6 +30,7 @@ set ruler               " カーソルの現在地表示
 scriptencoding utf-8
 set encoding=utf-8
 set guifont=Ricty\ 10
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
 " バックスラッシュやクエスチョンを状況に合わせ自動的にエスケープ
 cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
@@ -135,7 +134,7 @@ vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v, '\/'), "\n", '\\n', 'g')<C
 autocmd FileType python setlocal completeopt-=preview
 
 " python3 support
-let g:python3_host_prog = expand('$HOME') . '/.pyenv/versions/miniconda3-4.2.0/bin/python'
+let g:python3_host_prog = expand('$HOME') . '/.pyenv/versions/anaconda3-4.2.0/bin/python'
 
 " 検索後にジャンプした際に検索単語を画面中央に持ってくる
 nnoremap n nzz
@@ -249,7 +248,7 @@ if dein#load_state(s:dein_dir)
   " 管理するプラグインを記述したファイル
   let s:toml = '~/.config/dein/plugins.toml'
   call dein#load_toml(s:toml, {'lazy': 0})
-  call dein#add('altercation/vim-colors-solarized')
+  call dein#add('tomasr/molokai')
   call dein#end()
   call dein#save_state()
 endif
@@ -259,3 +258,6 @@ if dein#check_install()
   call dein#install()
 endif
 " }}}
+
+set background=dark
+colorscheme molokai

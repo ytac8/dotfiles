@@ -65,7 +65,7 @@
     #lightline settings{{{
     hook_add = '''
         let g:lightline = {
-            \ 'colorscheme': 'solarized',
+            \ 'colorscheme': 'molokai',
             \ 'mode_map': { 'c': 'NORMAL' },
             \ 'active': {
             \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
