@@ -7,7 +7,9 @@ augroup END
 if &compatible
   set nocompatible
 endif
+
 filetype plugin indent on
+
 syntax enable
 set t_Co=256
 set fileformats=unix
@@ -79,7 +81,8 @@ function! s:SID_PREFIX()
   return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSID_PREFIX$')
 endfunction
 
-" Set tabline.  function! s:my_tabline()  "{{{
+" Set tabline.  
+function! s:my_tabline()  "{{{
   let s = ''
   for i in range(1, tabpagenr('$'))
     let bufnrs = tabpagebuflist(i)
@@ -231,13 +234,12 @@ let g:deoplete#enable_at_startup = 1
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 
-" dein.vimがなければgit clone
+" dein.vim がなければ github から落としてくる
 if &runtimepath !~# '/dein.vim'
-    if !isdirectory(s:dein_repo_dir)
-        execute '!git clone https://github.com/Shougo/dein.vim'
-        s:dein_repo_dir
-    endif
-    execute 'set runtimepath^=' . s:dein_repo_dir
+  if !isdirectory(s:dein_repo_dir)
+    execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
+  endif
+  execute 'set runtimepath^=' . fnamemodify(s:dein_repo_dir, ':p')
 endif
 
 " 設定開始
@@ -247,7 +249,7 @@ if dein#load_state(s:dein_dir)
   " 管理するプラグインを記述したファイル
   let s:toml = '~/.config/dein/plugins.toml'
   call dein#load_toml(s:toml, {'lazy': 0})
-
+  call dein#add('altercation/vim-colors-solarized')
   call dein#end()
   call dein#save_state()
 endif
