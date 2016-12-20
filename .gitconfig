@@ -3,3 +3,6 @@
 
 [core]
     excludesfile = /Users/ytac8/.gitignore_global
+[user]
+	name = ytac8
+	email = y.tac0223@gmail.com
