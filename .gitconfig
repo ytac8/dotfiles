@@ -1,0 +1,5 @@
+[ghq]
+    root = ~/src
+
+[core]
+    excludesfile = /Users/ytac8/.gitignore_global

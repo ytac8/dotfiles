@@ -27,6 +27,7 @@ set incsearch           " インクリメンタルサーチ
 set hlsearch            " 検索マッチテキストをハイライト
 set foldenable          "折りたたみを有効にする
 set ruler               " カーソルの現在地表示
+set clipboard=unnamed
 scriptencoding utf-8
 set encoding=utf-8
 set guifont=Ricty\ 10
@@ -58,19 +59,16 @@ nnoremap Q q
 
 " クリップボードをデフォルトのレジスタとして指定。後にYankRingを使うので
 " 'unnamedplus'が存在しているかどうかで設定を分ける必要がある
-if has('unnamedplus')
-    " set clipboard& clipboard+=unnamedplus " 2013-07-03 14:30 unnamed 追加
-    set clipboard& clipboard+=unnamedplus,unnamed 
-else
-    " set clipboard& clipboard+=unnamed,autoselect 2013-06-24 10:00 autoselect 削除
-    set clipboard& clipboard+=unnamed
-endif
+" if has('unnamedplus')
+"     set clipboard& clipboard+=unnamedplus,unnamed 
+" else
+"     set clipboard& clipboard+=unnamed
+" endif
 
 set list                " 不可視文字の可視化
 set number              " 行番号の表示
 set wrap                " 長いテキストの折り返し
 set textwidth=0         " 自動的に改行が入るのを無効化
-set t_vb=
 set novisualbell
 
 nnoremap <CR> G

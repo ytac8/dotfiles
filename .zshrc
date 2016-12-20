@@ -1,9 +1,10 @@
-# solarizedの設定
+#lsの代わりにglsを使う
 alias ls='gls --color=auto'
-eval $(gdircolors ~/.config/dircolors-solarized)
-
 # vimをneovimにする
 alias vim='nvim'
+
+#GOPATHの設定
+export GOPATH=$HOME
 
 # neovim のコンフィグファイルの設定
 export XDG_CONFIG_HOME=$HOME/.config
@@ -157,6 +158,19 @@ zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
 precmd () { vcs_info }
 RPROMPT=$RPROMPT'${vcs_info_msg_0_}'
+
+#peco setting
+peco-src() {
+    local selected
+    selected="$(ghq list --full-path | peco --query="$LBUFFER")"
+    if [ -n "$selected" ]; then
+        BUFFER="builtin cd $selected"
+        # zle accept-line
+    fi
+    zle reset-prompt
+}
+zle -N peco-src
+bindkey '^]' peco-src
 
 # tmux自動起動設定
 
