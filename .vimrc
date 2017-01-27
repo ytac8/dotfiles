@@ -32,6 +32,7 @@ scriptencoding utf-8
 set encoding=utf-8
 set guifont=Ricty\ 10
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+set colorcolumn=80 
 
 " バックスラッシュやクエスチョンを状況に合わせ自動的にエスケープ
 cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
