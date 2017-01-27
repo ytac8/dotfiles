@@ -4,7 +4,17 @@
 [[plugins]]
     repo = 'Shougo/deoplete.nvim'
     on_i = 1
+    on_event = 'InsertCharPre'
     hook_add = '''
+        let g:deoplete#enable_at_startup = 1
+        let g:deoplete#auto_complete_delay = 0
+        let g:deoplete#auto_complete_start_length = 1
+        let g:deoplete#enable_camel_case = 0
+        let g:deoplete#enable_ignore_case = 0
+        let g:deoplete#enable_refresh_always = 0
+        let g:deoplete#enable_smart_case = 1
+        let g:deoplete#file#enable_buffer_path = 1
+        let g:deoplete#max_list = 10000
         inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
         inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>" 
     '''
@@ -18,7 +28,8 @@
         let g:unite_enable_start_insert=1
         nnoremap <silent> <space>ub :<C-u>Unite buffer<CR>
         nnoremap <silent> <space>uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-        nnoremap <silent> <space>ur :<C-u>Unite file_mru buffer<CR>
+        nnoremap <silent> <space>uu :<C-u>Unite file_mru buffer<CR>
+        nnoremap <silent> <space>ur :<C-u>Unite -buffer-name=register register<CR>
         " grep検索
         nnoremap <silent> <space>ug  :<C-u>Unite grep: -buffer-name=search-buffer<CR>
         " unite grepにhw(highway)を使う
