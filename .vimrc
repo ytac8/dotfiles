@@ -252,6 +252,11 @@ if dein#load_state(s:dein_dir)
   call dein#save_state()
 endif
 
+" check vimproc install
+if dein#check_install(['vimproc'])
+  call dein#install(['vimproc'])
+endif
+
 " その他インストールしていないものはこちらに入れる
 if dein#check_install()
   call dein#install()

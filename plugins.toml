@@ -52,10 +52,6 @@
     '''
 
 [[plugins]]
-    repo = 'Shougo/vimproc.vim'
-    build = 'make'
-
-[[plugins]]
     repo = 'Shougo/vimshell'
     hook_add = '''
         nnoremap <silent> <space>vs :<C-u>VimShell<CR>
@@ -64,6 +60,15 @@
             \ <buffer><silent><expr><C-d>
             \ vimshell#get_cur_text()=='' ? "\<Esc>\<Plug>(vimshell_exit)" : "\<Del>"
     '''
+
+[[plugins]]
+    repo = 'kana/vim-smartinput'
+
+[[plugins]]
+    repo = 'kana/vim-operator-user'
+
+[[plugins]]
+    repo = 'kana/vim-textobj-user'
 
 [[plugins]]
     repo = 'tpope/vim-commentary'
@@ -157,12 +162,23 @@
     repo = 'othree/html5.vim'
 
 [[plugins]]
-    repo = 'tpope/vim-surround'
+    repo = 'rhysd/vim-operator-surround'
 
 [[plugins]]
     repo = 'thinca/vim-quickrun'
     hook_add = '''
         nnoremap = <silent> <space>qr :<C-u>QuickRun<CR>
+        nnoremap <expr><silent> <C-c> quickrun#is_running() 
+                    \? quickrun#sweep_sessions() : "\<C-c>"
+
+        let g:quickrun_config = {
+            \   "_" : {
+            \       "runner" : "vimproc",
+            \       "runner/vimproc/updatetime" : 60,
+            \       "outputter/buffer/split" : ":botright",
+            \       "outputter/buffer/close_on_empty" : 1
+            \   },
+            \}
     '''
 
 [[plugins]]
@@ -334,6 +350,15 @@
 
 [[plugins]]
     repo = 'zchee/deoplete-jedi'
+    on_ft = ['python', 'python3', 'djangohtml']
+
+[[plugins]]
+    repo = 'andviro/flake8-vim'
+    on_ft = ['python', 'python3', 'djangohtml']
+
+[[plugins]]
+    repo = 'hynek/vim-python-pep8-indent'
+    on_ft = ['python', 'python3', 'djangohtml']
 
 #NyaoVim Settings
 [[plugins]]
