@@ -3,21 +3,16 @@
 
 [[plugins]]
     repo = 'Shougo/deoplete.nvim'
-    on_i = 1
     on_event = 'InsertCharPre'
     hook_add = '''
         let g:deoplete#enable_at_startup = 1
-        let g:deoplete#auto_complete_delay = 0
-        let g:deoplete#auto_complete_start_length = 1
-        let g:deoplete#enable_camel_case = 0
-        let g:deoplete#enable_ignore_case = 0
-        let g:deoplete#enable_refresh_always = 0
-        let g:deoplete#enable_smart_case = 1
         let g:deoplete#file#enable_buffer_path = 1
-        let g:deoplete#max_list = 10000
+        let g:deoplete#auto_complete_delay = 0
+        let g:deoplete#max_list = 10
         inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
         inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>" 
     '''
+    on_i = 1
 
 [[plugins]]
     repo = 'Shougo/neomru.vim'
@@ -341,12 +336,6 @@
     on_ft = ['ruby']
 
 #python settings
-[[plugins]]
-    repo = 'davidhalter/jedi-vim'
-    on_ft = ['python', 'python3', 'djangohtml']
-    hook_add = '''
-        let g:jedi#force_py_version=3
-    '''
 
 [[plugins]]
     repo = 'zchee/deoplete-jedi'
@@ -366,4 +355,7 @@
 
 [[plugins]]
     repo = 'rhysd/nyaovim-mini-browser'
+
+[[plugins]]
+    repo = 'cespare/vim-toml'
 
