@@ -104,8 +104,9 @@ zstyle ':zle:*' word-style unspecified
 setopt no_flow_control
 
 # プロンプトを2行で表示、時刻を表示
+INU=$'\U1F436'
 PROMPT="%(?.%{${fg[green]}%}.%{${fg[red]}%})%n${reset_color}@${fg[blue]}%m${reset_color}(%*%) %~
-%# "
+${INU} { "
 
 # 補完後、メニュー選択モードになり左右キーで移動が出来る
 zstyle ':completion:*:default' menu select=2
