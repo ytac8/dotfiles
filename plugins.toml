@@ -2,6 +2,9 @@
     repo = 'Shougo/dein.vim'
 
 [[plugins]]
+    repo = 'Shougo/vimproc.vim'
+
+[[plugins]]
     repo = 'Shougo/deoplete.nvim'
     on_event = 'InsertCharPre'
     hook_add = '''

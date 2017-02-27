@@ -149,7 +149,7 @@ function mkcd() {
 }
 
 # git設定
-RPROMPT="%{${fg[blue]}%}[%~]%{${reset_color}%}"
+RPROMPT="%[%~]%{${reset_color}%}"
 autoload -Uz vcs_info
 setopt prompt_subst
 zstyle ':vcs_info:git:*' check-for-changes true
