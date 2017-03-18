@@ -21,6 +21,9 @@
     repo = 'Shougo/neomru.vim'
 
 [[plugins]]
+    repo = 'Yggdroot/indentLine'
+
+[[plugins]]
     repo = 'Shougo/unite.vim'
     hook_add = '''
         let g:unite_enable_start_insert=1
@@ -94,8 +97,7 @@
             \   'fileencoding': 'LightLineFileencoding',
             \   'mode': 'LightLineMode',
             \ },
-            \ 'separator': { 'left': '⮀', 'right': '⮂' },
-            \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
+            \ 'subseparator': { 'left': '|', 'right': '|' }
             \ }
 
         function! LightLineModified()

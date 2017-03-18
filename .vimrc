@@ -34,6 +34,11 @@ set guifont=Ricty\ 10
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 set colorcolumn=80 
 
+set showmatch " 括弧の対応関係を一瞬表示する
+source $VIMRUNTIME/macros/matchit.vim " Vimの「%」を拡張する
+set wildmenu " コマンドモードの補完
+set history=5000 " 保存するコマンド履歴の数
+
 " バックスラッシュやクエスチョンを状況に合わせ自動的にエスケープ
 cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
 cnoremap <expr> ? getcmdtype() == '?' ? '\?' : '?'
@@ -51,9 +56,6 @@ set matchpairs& matchpairs+=<:>
 
 " バックスペースでなんでも消せるようにする
 set backspace=indent,eol,start
-
-"shift o で空白行を挿入
-nnoremap O :<C-u>call append(expand('.'), '')<Cr>j
 
 "map macro to Q
 nnoremap Q q
