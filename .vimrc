@@ -9,7 +9,6 @@ if &compatible
 endif
 
 filetype plugin indent on
-syntax enable
 set fileformats=unix
 set nowritebackup
 set noswapfile
@@ -249,7 +248,8 @@ if dein#load_state(s:dein_dir)
   " 管理するプラグインを記述したファイル
   let s:toml = '~/.config/dein/plugins.toml'
   call dein#load_toml(s:toml, {'lazy': 0})
-  call dein#add('tomasr/molokai')
+
+  call dein#add('altercation/vim-colors-solarized')
   call dein#end()
   call dein#save_state()
 endif
@@ -260,5 +260,8 @@ if dein#check_install()
 endif
 " }}}
 
+" let g:hybrid_custom_term_colors = 1
+" let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
+syntax enable
 set background=dark
-colorscheme molokai
+colorscheme solarized

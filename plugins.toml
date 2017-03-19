@@ -78,11 +78,14 @@
     repo = 'tpope/vim-rsi'
 
 [[plugins]]
+    repo = 'cocopon/lightline-hybrid.vim'
+
+[[plugins]]
     repo = 'itchyny/lightline.vim'
     #lightline settings{{{
     hook_add = '''
         let g:lightline = {
-            \ 'colorscheme': 'molokai',
+            \ 'colorscheme': 'solarized',
             \ 'mode_map': { 'c': 'NORMAL' },
             \ 'active': {
             \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
@@ -97,7 +100,10 @@
             \   'fileencoding': 'LightLineFileencoding',
             \   'mode': 'LightLineMode',
             \ },
-            \ 'subseparator': { 'left': '|', 'right': '|' }
+            \ 'subseparator': { 'left': '|', 'right': '|' },
+            \ 'tabline': {'left': [['tabs']], 'right': [['close']]},
+            \ 'component_expand': {'tabs': 'lightline#tabs'},
+            \ 'component_type': {'tabs': 'tabsel'}
             \ }
 
         function! LightLineModified()
