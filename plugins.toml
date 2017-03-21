@@ -85,7 +85,7 @@
     #lightline settings{{{
     hook_add = '''
         let g:lightline = {
-            \ 'colorscheme': 'solarized',
+            \ 'colorscheme': 'hybrid',
             \ 'mode_map': { 'c': 'NORMAL' },
             \ 'active': {
             \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
@@ -101,7 +101,7 @@
             \   'mode': 'LightLineMode',
             \ },
             \ 'subseparator': { 'left': '|', 'right': '|' },
-            \ 'tabline': {'left': [['tabs']], 'right': [['close']]},
+            \ 'tabline': {'left': [['tabs']], 'right': [['close']], 'colorscheme': 'hybrid'},
             \ 'component_expand': {'tabs': 'lightline#tabs'},
             \ 'component_type': {'tabs': 'tabsel'}
             \ }

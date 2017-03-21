@@ -249,7 +249,8 @@ if dein#load_state(s:dein_dir)
   let s:toml = '~/.config/dein/plugins.toml'
   call dein#load_toml(s:toml, {'lazy': 0})
 
-  call dein#add('altercation/vim-colors-solarized')
+  " call dein#add('altercation/vim-colors-solarized')
+  call dein#add('w0ng/vim-hybrid')
   call dein#end()
   call dein#save_state()
 endif
@@ -260,8 +261,8 @@ if dein#check_install()
 endif
 " }}}
 
-" let g:hybrid_custom_term_colors = 1
-" let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
+let g:hybrid_custom_term_colors = 1
+let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
 syntax enable
 set background=dark
-colorscheme solarized
+colorscheme hybrid
