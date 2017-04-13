@@ -169,12 +169,6 @@ nnoremap <space>qr <C-u>:QuickRun<CR>
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 
-" insert modeでのHJKL移動
-inoremap <C-h> <Left>
-inoremap <C-j> <Down>
-inoremap <C-k> <Up>
-inoremap <C-l> <Right>
-
 "行頭、行末の移動ショートカット
 nnoremap ,l $
 nnoremap ,h ^
