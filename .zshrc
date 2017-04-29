@@ -1,5 +1,3 @@
-#lsの代わりにglsを使う
-alias ls='gls --color=auto'
 # vimをneovimにする
 alias vim='nvim'
 
@@ -13,7 +11,7 @@ export XDG_CONFIG_HOME=$HOME/.config
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
-export PATH="$PYENV_ROOT/versions/anaconda3-4.2.0/bin:$PATH"
+export PATH="$PYENV_ROOT/versions/miniconda3-4.3.11/bin:$PATH"
 
 #terminalの色の設定
 export TERM=xterm-256color
