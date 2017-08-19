@@ -9,6 +9,10 @@ export GOPATH=$HOME
 # neovim のコンフィグファイルの設定
 export XDG_CONFIG_HOME=$HOME/.config
 
+# scala setting
+export PATH="${HOME}/.scalaenv/bin:${PATH}"
+eval "$(scalaenv init -)"
+
 # pyenvのpath設定
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"

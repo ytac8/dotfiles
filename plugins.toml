@@ -62,15 +62,6 @@
     '''
 
 [[plugins]]
-    repo = 'kana/vim-smartinput'
-
-[[plugins]]
-    repo = 'kana/vim-operator-user'
-
-[[plugins]]
-    repo = 'kana/vim-textobj-user'
-
-[[plugins]]
     repo = 'tpope/vim-commentary'
 
 [[plugins]]
@@ -165,9 +156,6 @@
 
 [[plugins]]
     repo = 'othree/html5.vim'
-
-[[plugins]]
-    repo = 'rhysd/vim-operator-surround'
 
 [[plugins]]
     repo = 'thinca/vim-quickrun'
@@ -345,7 +333,7 @@
     repo = 'tpope/vim-rails'
     on_ft = ['ruby']
 
-#python settings
+# python settings
 
 [[plugins]]
     repo = 'davidhalter/jedi-vim'
@@ -367,5 +355,40 @@
     on_ft = ['python', 'python3', 'djangohtml']
 
 [[plugins]]
-    repo = 'cespare/vim-toml'
+    repo = 'tell-k/vim-autopep8'
+    on_ft = ['python', 'python3']
+    hook_add = '''
+        function! Preserve(command)
+            " Save the last search.
+            let search = @/
+            " Save the current cursor position.
+            let cursor_position = getpos('.')
+            " Save the current window position.
+            normal! H
+            let window_position = getpos('.')
+            call setpos('.', cursor_position)
+            " Execute the command.
+            execute a:command
+            " Restore the last search.
+            let @/ = search
+            " Restore the previous window position.
+            call setpos('.', window_position)
+            normal! zt
+            " Restore the previous cursor position.
+            call setpos('.', cursor_position)
+        endfunction
+        
+        function! Autopep8()
+            call Preserve(':silent %!autopep8 -')
+        endfunction
+        
+        autocmd FileType python nnoremap <S-f> :call Autopep8()<CR>
+    '''
 
+# scala setting
+[[plugins]]
+    repo = 'derekwyatt/vim-scala'
+    on_ft = ['scala']
+
+[[plugins]]
+    repo = 'cespare/vim-toml'
