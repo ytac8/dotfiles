@@ -11,6 +11,9 @@
         let g:deoplete#enable_at_startup = 1
         let g:deoplete#file#enable_buffer_path = 1
         let g:deoplete#max_list = 100
+        let g:deoplete#omni#input_patterns = {}
+        let g:deoplete#omni#input_patterns.java = '\k\.\k*'
+        let g:deoplete#omni#input_patterns.scala = '\k\.\k*'
         inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
         inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>" 
     '''
@@ -72,7 +75,6 @@
 
 [[plugins]]
     repo = 'itchyny/lightline.vim'
-    #lightline settings{{{
     hook_add = '''
         let g:lightline = {
             \ 'colorscheme': 'hybrid',
@@ -95,7 +97,6 @@
             \ 'component_expand': {'tabs': 'lightline#tabs'},
             \ 'component_type': {'tabs': 'tabsel'}
             \ }
-
         function! LightLineModified()
           return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
         endfunction
@@ -136,12 +137,10 @@
         function! LightLineMode()
           return winwidth(0) > 60 ? lightline#mode() : ''
         endfunction
-
         let g:unite_force_overwrite_statusline = 0
         let g:vimfiler_force_overwrite_statusline = 0
         let g:vimshell_force_overwrite_statusline = 0
     '''
-#}}}
 
 [[plugins]]
     repo = 'kchmck/vim-coffee-script'
@@ -390,5 +389,13 @@
     repo = 'derekwyatt/vim-scala'
     on_ft = ['scala']
 
+# go setting
+[[plugins]]
+    repo = 'fatih/vim-go'
+
+[[plugins]]
+    repo = 'zchee/deoplete-go'
+
 [[plugins]]
     repo = 'cespare/vim-toml'
+
