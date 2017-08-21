@@ -390,10 +390,8 @@
     on_ft = ['scala']
 
 [[plugins]]
-    repo = 'ensime/ensime-vim'
-
-[[plugins]]
     repo = 'vim-syntastic/syntastic'
+
 # go setting
 [[plugins]]
     repo = 'fatih/vim-go'
