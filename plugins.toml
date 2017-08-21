@@ -11,9 +11,9 @@
         let g:deoplete#enable_at_startup = 1
         let g:deoplete#file#enable_buffer_path = 1
         let g:deoplete#max_list = 100
-        let g:deoplete#omni#input_patterns = {}
-        let g:deoplete#omni#input_patterns.java = '\k\.\k*'
-        let g:deoplete#omni#input_patterns.scala = '\k\.\k*'
+        let g:deoplete#omni_patterns={} 
+        let g:deoplete#omni_patterns.java='[^. *\t]\.\w*'
+        let g:deoplete#omni_patterns.scala='[^. *\t]\.\w*'
         inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
         inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>" 
     '''
@@ -389,6 +389,11 @@
     repo = 'derekwyatt/vim-scala'
     on_ft = ['scala']
 
+[[plugins]]
+    repo = 'ensime/ensime-vim'
+
+[[plugins]]
+    repo = 'vim-syntastic/syntastic'
 # go setting
 [[plugins]]
     repo = 'fatih/vim-go'

@@ -8,6 +8,9 @@ if &compatible
   set nocompatible
 endif
 
+" Turn off paste mode when leaving insert
+autocmd InsertLeave * set nopaste
+
 filetype plugin indent on
 set fileformats=unix
 set nowritebackup
