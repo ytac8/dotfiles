@@ -75,8 +75,6 @@ alias l='ls -ltr --color=auto'
 alias la='ls -la --color=auto'
 alias ll='ls -l --color=auto'
 alias so='source'
-alias v='vim'
-alias vi='vim'
 alias vz='vim ~/.zshrc'
 alias c='cdr'
 # historyに日付を表示
