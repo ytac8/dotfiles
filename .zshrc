@@ -12,6 +12,7 @@ export XDG_CONFIG_HOME=$HOME/.config
 # scala setting
 export PATH="${HOME}/.scalaenv/bin:${PATH}"
 eval "$(scalaenv init -)"
+export JAVA_HOME='/usr/libexec/java_home -v 1.8'
 
 # pyenvのpath設定
 export PYENV_ROOT="$HOME/.pyenv"

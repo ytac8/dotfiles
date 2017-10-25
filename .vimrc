@@ -32,7 +32,7 @@ set encoding=utf-8
 set guifont=Ricty\ 10
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 set colorcolumn=80 
-
+let ensime_server_v2=1
 set showmatch " 括弧の対応関係を一瞬表示する
 source $VIMRUNTIME/macros/matchit.vim " Vimの「%」を拡張する
 set wildmenu " コマンドモードの補完
