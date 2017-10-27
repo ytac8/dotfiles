@@ -297,14 +297,6 @@
     on_ft = 'toml'
 
 [[plugins]]
-    repo = 'Shougo/vimfiler.vim'
-    hook_add ='''
-        nnoremap <space>vf :VimFiler<CR>
-        let g:vimfiler_as_default_explorer = 1
-        let g:vimfiler_edit_action = 'tabopen'
-    '''
-
-[[plugins]]
     repo = 'tyru/open-browser.vim'
 
 [[plugins]]
