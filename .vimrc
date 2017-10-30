@@ -37,6 +37,9 @@ set showmatch " 括弧の対応関係を一瞬表示する
 source $VIMRUNTIME/macros/matchit.vim " Vimの「%」を拡張する
 set wildmenu " コマンドモードの補完
 set history=5000 " 保存するコマンド履歴の数
+if exists('&inccommand')
+  set inccommand=split "incserch setting for neovim
+endif
 
 " バックスラッシュやクエスチョンを状況に合わせ自動的にエスケープ
 cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
@@ -58,14 +61,6 @@ set backspace=indent,eol,start
 
 "map macro to Q
 nnoremap Q q
-
-" クリップボードをデフォルトのレジスタとして指定。後にYankRingを使うので
-" 'unnamedplus'が存在しているかどうかで設定を分ける必要がある
-" if has('unnamedplus')
-"     set clipboard& clipboard+=unnamedplus,unnamed 
-" else
-"     set clipboard& clipboard+=unnamed
-" endif
 
 set list                " 不可視文字の可視化
 set number              " 行番号の表示
