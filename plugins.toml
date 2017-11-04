@@ -203,6 +203,8 @@
     repo = 'lambdalisue/gina.vim'
     hook_add = '''
         nnoremap <silent> <space>gs :<C-u>Gina status<CR>
+        nnoremap <silent> <space>gc :<C-u>Gina commit<CR>
+        nnoremap <silent> <space>gp :<C-u>Gina push<CR>
     '''
 
 [[plugins]]
