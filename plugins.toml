@@ -3,6 +3,7 @@
 
 [[plugins]]
     repo = 'Shougo/vimproc.vim'
+    build='make'
 
 [[plugins]]
     repo = 'Shougo/deoplete.nvim'
@@ -199,13 +200,9 @@
     '''
 
 [[plugins]]
-    repo = 'tpope/vim-fugitive'
+    repo = 'lambdalisue/gina.vim'
     hook_add = '''
-        nnoremap <silent> <space>gs :<C-u>Gstatus<CR>
-        nnoremap <silent> <space>gc :<C-u>Gcommit<CR>
-        nnoremap <silent> <space>ga :<C-u>Gwrite<CR>
-        nnoremap <silent> <space>gd :<C-u>Gdiff<CR>
-        nnoremap <silent> <space>gb :<C-u>Gblame<CR>
+        nnoremap <silent> <space>gs :<C-u>Gina status<CR>
     '''
 
 [[plugins]]
