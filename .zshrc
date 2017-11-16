@@ -92,7 +92,7 @@ stty erase ^H
 bindkey "^[[3~" delete-char
 
 # cdの後にlsを実行
-chpwd() { ls -ltr --color=auto }
+# chpwd() { ls -ltr --color=auto }
 
 # どこからでも参照できるディレクトリパス
 cdpath=(~)
@@ -134,6 +134,7 @@ bindkey "^b" history-beginning-search-forward-end
 autoload -Uz add-zsh-hook
 autoload -Uz chpwd_recent_dirs cdr
 add-zsh-hook chpwd chpwd_recent_dirs
+
 # cdrコマンドで履歴にないディレクトリにも移動可能に
 zstyle ":chpwd:*" recent-dirs-default true
 
@@ -177,7 +178,6 @@ zle -N peco-src
 bindkey '^]' peco-src
 
 # tmux自動起動設定
-
 function is_exists() { type "$1" >/dev/null 2>&1; return $?; }
 function is_osx() { [[ $OSTYPE == darwin* ]]; }
 function is_screen_running() { [ ! -z "$STY" ]; }
