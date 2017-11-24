@@ -22,6 +22,9 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 export PATH="$PYENV_ROOT/versions/anaconda3-4.2.0/bin:$PATH"
 
+# node path setting
+export PATH=$HOME/.nodebrew/current/bin:$PATH
+
 #terminalの色の設定
 export TERM=xterm-256color
 
@@ -133,8 +136,11 @@ function mkcd() {
   fi
 }
 
+##############################
+# peco setting
+##############################
 
-#peco setting
+# peco ghq home dir
 peco-src() {
     local selected
     selected="$(ghq list --full-path | peco --query="$LBUFFER")"
@@ -147,6 +153,15 @@ peco-src() {
 zle -N peco-src
 bindkey '^]' peco-src
 
+# peco historical search
+function peco-history-selection() {
+    BUFFER=`history -n 1 | tail -r  | awk '!a[$0]++' | peco`
+    CURSOR=$#BUFFER
+    zle reset-prompt
+}
+
+zle -N peco-history-selection
+bindkey '^R' peco-history-selection
 
 ############################### 
 # zplug
