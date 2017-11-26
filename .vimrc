@@ -53,10 +53,6 @@ set switchbuf=useopen   " 新しく開く代わりにすでに開いてあるバ
 set showmatch           " 対応する括弧などをハイライト表示する
 set matchtime=3         " 対応括弧のハイライト表示を3秒にする
 
-" nyaovim settings
-let g:markdown_preview_auto=1
-let g:markdown_preview_eager=1
-
 " 対応括弧に'<'と'>'のペアを追加
 set matchpairs& matchpairs+=<:>
 

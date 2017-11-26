@@ -398,7 +398,3 @@
 
 [[plugins]]
     repo = 'cespare/vim-toml'
-
-# nyaovim setting
-[[plugins]]
-    repo = 'rhysd/nyaovim-markdown-preview'
