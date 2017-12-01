@@ -247,6 +247,7 @@
         " if you are true vimmer, you should explicitly map keys by yourself.
         " do not rely on default bidings.
         let g:easymotion_do_mapping = 0
+        let g:EasyMotion_smartcase = 1
         " or map prefix key at least(default: <leader><leader>)
         " map <leader> <plug>(easymotion-prefix)
         " =======================================
