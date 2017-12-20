@@ -387,9 +387,6 @@
 [[plugins]]
     repo = 'ktvoelker/sbt-vim'
 
-[[plugins]]
-    repo = 'ensime/ensime-vim'
-
 # go setting
 [[plugins]]
     repo = 'fatih/vim-go'
