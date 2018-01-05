@@ -127,7 +127,7 @@ vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v, '\/'), "\n", '\\n', 'g')<C
 autocmd FileType python setlocal completeopt-=preview
 
 " python3 support
-let g:python3_host_prog = expand('$HOME') . '/.pyenv/versions/anaconda3-4.2.0/bin/python'
+" let g:python3_host_prog = expand('$HOME') . '/.pyenv/versions/anaconda3-4.2.0/bin/python'
 
 " 検索後にジャンプした際に検索単語を画面中央に持ってくる
 nnoremap n nzz
@@ -165,6 +165,11 @@ nnoremap <C-j> <C-w>j
 "行頭、行末の移動ショートカット
 nnoremap ,l $
 nnoremap ,h ^
+
+" vsplitとかの設定
+nnoremap ,v <C-u>:vsplit<CR>
+nnoremap ,s <C-u>:split<CR>
+
 "コロンとセミコロンの入れ替え
 nnoremap ; :
 " Shift + 矢印でウィンドウサイズを変更

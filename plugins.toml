@@ -346,6 +346,11 @@
     on_ft = ['python', 'python3', 'djangohtml']
 
 [[plugins]]
+    repo = 'lambdalisue/vim-pyenv'
+    depends = ['davidhalter/jedi-vim']
+    on_ft = ['python', 'python3', 'djangohtml']
+
+[[plugins]]
     repo = 'tell-k/vim-autopep8'
     on_ft = ['python', 'python3']
     hook_add = '''
