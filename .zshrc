@@ -184,7 +184,7 @@ zplug "junegunn/fzf-bin", \
     as:command, \
     rename-to:"fzf", \
     from:gh-r, \
-    on: zplug "b4b4r07/enhancd", use:enhancd.sh
+    use:"*darwin*amd64*"
 
 zplug "motemen/ghq", \
     as:command, \
