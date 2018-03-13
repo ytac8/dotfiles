@@ -126,9 +126,6 @@ vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v, '\/'), "\n", '\\n', 'g')<C
 " docstringは表示しない
 autocmd FileType python setlocal completeopt-=preview
 
-" python3 support
-" let g:python3_host_prog = expand('$HOME') . '/.pyenv/versions/anaconda3-4.2.0/bin/python'
-
 " 検索後にジャンプした際に検索単語を画面中央に持ってくる
 nnoremap n nzz
 nnoremap N Nzz
