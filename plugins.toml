@@ -77,6 +77,32 @@
     repo = 'tpope/vim-rsi'
 
 [[plugins]]
+    repo = 'autozimu/LanguageClient-neovim'
+    rev = 'next'
+    build = 'bash install.sh'
+    hook_add = '''
+        set hidden
+        setlocal iskeyword+=$
+        setlocal iskeyword+=-
+        let g:LanguageClient_serverCommands = {
+            \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+            \ 'javascript': ['javascript-typescript-stdio'],
+            \ 'typescript': ['javascript-typescript-stdio'],
+            \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
+            \ 'html': [],
+            \ 'css': [],
+            \ 'vue': ['vls']
+            \ }
+        
+        nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+        nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+        nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+    '''
+
+[[plugins]]
+    repo = 'junegunn/fzf'
+
+[[plugins]]
     repo = 'tpope/vim-surround'
 
 [[plugins]]
@@ -158,6 +184,14 @@
     repo = 'leafgarland/typescript-vim'
 [[plugins]]
     repo = 'Shougo/neosnippet'
+    hook_add = '''
+        imap <C-k> <Plug>(neosnippet_expand_or_jump)
+        smap <C-k> <Plug>(neosnippet_expand_or_jump)
+        xmap <C-k> <Plug>(neosnippet_expand_target)
+        let g:neosnippet#enable_snipmate_compatibility = 1
+        let g:neosnippet#enable_completed_snippet = 1
+        let g:neosnippet#expand_word_boundary = 1
+    '''
 
 [[plugins]]
     repo = 'Shougo/neosnippet-snippets'
@@ -220,8 +254,6 @@
 [[plugins]]
     repo = 'plasticboy/vim-markdown'
 
-[[plugins]]
-    repo = 'pangloss/vim-javascript'
 
 [[plugins]]
     repo = 'scrooloose/syntastic'
@@ -401,3 +433,8 @@
 
 [[plugins]]
     repo = 'cespare/vim-toml'
+
+# javascript settings
+[[plugins]]
+    repo = 'pangloss/vim-javascript'
+
