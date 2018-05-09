@@ -8,7 +8,6 @@ if &compatible
   set nocompatible
 endif
 
-filetype plugin indent on
 set fileformats=unix
 set nowritebackup
 set noswapfile
@@ -29,10 +28,8 @@ set ruler               " カーソルの現在地表示
 set clipboard=unnamed
 scriptencoding utf-8
 set encoding=utf-8
-set guifont=Ricty\ 10
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 set colorcolumn=80 
-let ensime_server_v2=1
 set showmatch " 括弧の対応関係を一瞬表示する
 source $VIMRUNTIME/macros/matchit.vim " Vimの「%」を拡張する
 set wildmenu " コマンドモードの補完
@@ -93,7 +90,6 @@ function! s:my_tabline()  "{{{
   return s
 endfunction "}}}
 let &tabline = '%!'. s:SID_PREFIX() . 'my_tabline()'
-" set showtabline=2 " 常にタブラインを表示
 
 " The prefix key.
 nnoremap    [Tag]   <Nop>
@@ -152,15 +148,8 @@ vnoremap v $h
 nnoremap <Tab> %
 vnoremap <Tab> %
 
-"fugitive keymap
-nnoremap <space>gis <C-u>:Gstatus<CR>
-
 "quickrun keymap
 nnoremap <space>qr <C-u>:QuickRun<CR>
-
-" Ctrl + hjkl でウィンドウ間を移動
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
 
 "行頭、行末の移動ショートカット
 nnoremap ,l $
@@ -172,7 +161,6 @@ nnoremap ,s <C-u>:split<CR>
 
 "コロンとセミコロンの入れ替え
 nnoremap ; :
-" Shift + 矢印でウィンドウサイズを変更
 nnoremap <S-Left>  <C-w><<CR>
 nnoremap <S-Right> <C-w>><CR>
 nnoremap <S-Up>    <C-w>-<CR>
@@ -213,13 +201,6 @@ function! s:ChangeCurrentDir(directory, bang)
 endfunction
 " }}}
 
-"nyaovim markdown用の設定
-let g:markdown_preview_auto = 1
-let g:markdown_preview_eager = 1
-
-"deoplete setting
-let g:deoplete#enable_at_startup = 1
-
 " dein settings {{{
 " dein.vimのディレクトリ
 let s:dein_dir = expand('~/.cache/dein')
@@ -255,6 +236,7 @@ endif
 
 let g:hybrid_custom_term_colors = 1
 let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
+filetype plugin indent on
 syntax enable
 set background=dark
 colorscheme hybrid

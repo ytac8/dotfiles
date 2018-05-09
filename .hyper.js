@@ -4,6 +4,9 @@
 
 module.exports = {
   config: {
+    env: {
+      LANG: 'ja_JP.UTF-8',
+    },
     // Choose either "stable" for receiving highly polished,
     // or "canary" for less polished but more frequent updates
     updateChannel: 'stable',
@@ -96,11 +99,13 @@ module.exports = {
 
     // if true, selected text will automatically be copied to the clipboard
     copyOnSelect: false,
+
     hypercwd:{
         initialWorkingDirectory: '~/'
     },
     hyperTabs:{
         tabIconsColored: true,
+        trafficButtons: true,
     }
 
     // if true, on right click selected text will be copied or pasted if no

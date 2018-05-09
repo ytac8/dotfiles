@@ -29,6 +29,7 @@ export TERM=xterm-256color
 
 # 日本語を使用
 export LANG=ja_JP.UTF-8
+export LC_ALL=ja_JP.UTF-8
 
 # パスを追加したい場合
 export PATH="$HOME/bin:$PATH"

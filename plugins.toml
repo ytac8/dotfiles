@@ -8,21 +8,45 @@
 [[plugins]]
     repo = 'Shougo/deoplete.nvim'
     on_event = 'InsertCharPre'
+    do = 'UpdateRemotePlugins'
+
     hook_add = '''
         let g:deoplete#enable_at_startup = 1
         let g:deoplete#file#enable_buffer_path = 1
-        let g:deoplete#max_list = 100
+        let g:deoplete#max_list = 50
         let g:deoplete#omni#input_patterns = {}
         let g:deoplete#omni#input_patterns.java='[^. *\t]\.\w*'
         let g:deoplete#omni#input_patterns.scala='[^. *\t]\.\w*'
-        inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-        inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
-    '''
+
+        inoremap <silent><expr> <TAB>
+              \ pumvisible() ? "\<C-n>" :
+              \ <SID>check_back_space() ? "\<TAB>" :
+              \ deoplete#manual_complete()
+        function! s:check_back_space() abort "{{{
+          let col = col('.') - 1
+          return !col || getline('.')[col - 1]  =~ '\s'
+        endfunction"}}}
+
+        " <S-TAB>: completion back.
+        inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
+
+        " <BS>: close popup and delete backword char.
+        inoremap <expr><BS> deoplete#smart_close_popup()."\<C-h>"
+
+        " <CR>: close popup and save indent.
+        inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+        function! s:my_cr_function() abort
+          return deoplete#cancel_popup() . "\<CR>"
+        endfunction
+
+        let g:deoplete#enable_refresh_always = 0
+        let g:deoplete#enable_camel_case = 1
+        let g:deoplete#skip_chars = ['(', ')']
+        '''
     on_i = 1
 
 [[plugins]]
     repo = 'Shougo/neomru.vim'
-
 [[plugins]]
     repo = 'Yggdroot/indentLine'
 
@@ -69,6 +93,8 @@
             \ <buffer><silent><expr><C-d>
             \ vimshell#get_cur_text()=='' ? "\<Esc>\<Plug>(vimshell_exit)" : "\<Del>"
     '''
+[[plugins]]
+    repo = 'osyo-manga/vim-over'
 
 [[plugins]]
     repo = 'tpope/vim-commentary'
@@ -82,22 +108,23 @@
     build = 'bash install.sh'
     hook_add = '''
         set hidden
-        setlocal iskeyword+=$
-        setlocal iskeyword+=-
         let g:LanguageClient_serverCommands = {
-            \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+            \ 'vue':['vls'],
+            \ 'html' : [],
+            \ 'css' : [],
             \ 'javascript': ['javascript-typescript-stdio'],
             \ 'typescript': ['javascript-typescript-stdio'],
-            \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
-            \ 'html': [],
-            \ 'css': [],
-            \ 'vue': ['vls']
             \ }
-        
+
         nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
         nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
         nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+        setlocal iskeyword+=$
+        setlocal iskeyword+=-
     '''
+
+[[plugins]]
+    repo = 'rhysd/clever-f.vim'
 
 [[plugins]]
     repo = 'junegunn/fzf'
@@ -178,12 +205,8 @@
     '''
 
 [[plugins]]
-    repo = 'kchmck/vim-coffee-script'
-
-[[plugins]]
-    repo = 'leafgarland/typescript-vim'
-[[plugins]]
     repo = 'Shougo/neosnippet'
+    depends = 'honza/vim-snippets'
     hook_add = '''
         imap <C-k> <Plug>(neosnippet_expand_or_jump)
         smap <C-k> <Plug>(neosnippet_expand_or_jump)
@@ -437,4 +460,12 @@
 # javascript settings
 [[plugins]]
     repo = 'pangloss/vim-javascript'
+[[plugins]]
+    repo = 'mhartington/nvim-typescript'
+    hook_add = '''
+        let g:nvim_typesctipt#vue_support = 1 
+    '''
+
+[[plugins]]
+    repo = 'posva/vim-vue'
 
