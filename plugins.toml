@@ -243,15 +243,6 @@
     repo = 'nathanaelkane/vim-indent-guides'
 
 [[plugins]]
-    repo = 'kevinw/pyflakes-vim'
-    hook_add = '''
-        let g:syntastic_mode_map = {
-            \ 'mode': 'active',
-            \ 'active_filetypes': ['php', 'coffeescript', 'sh', 'vim'],
-            \ 'passive_filetypes': ['html', 'haskell', 'python']
-        \}
-    '''
-[[plugins]]
     repo = 'cohama/lexima.vim'
     on_i = '''
         call lexima#add_rule({'char': '$', 'input_after': '$', 'filetype': 'latex'})
@@ -276,14 +267,6 @@
     '''
 [[plugins]]
     repo = 'plasticboy/vim-markdown'
-
-
-[[plugins]]
-    repo = 'scrooloose/syntastic'
-    hook_add = '''
-        let g:syntastic_enable_signs=1
-        let g:syntastic_auto_loc_list=2
-    '''
 
 [[plugins]]
     repo = 'tpope/vim-haml'
@@ -335,9 +318,6 @@
         let g:easymotion_enter_jump_first = 1
         let g:easymotion_space_jump_first = 1
     '''
-
-[[plugins]]
-    repo = 'scrooloose/syntastic.git'
 
 [[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
     repo = 'osyo-manga/vim-precious'
@@ -406,6 +386,27 @@
     on_ft = ['python', 'python3', 'djangohtml']
 
 [[plugins]]
+    repo = 'w0rp/ale'
+    hook_add = '''
+        let g:ale_lint_on_enter = 0
+        let g:ale_lint_on_text_changed = 0
+        let g:ale_sign_column_always = 1
+        let g:ale_fix_on_save = 1
+        let g:ale_completion_enabled = 1
+        let g:ale_linter_aliases = {'vue': 'css'}
+        let g:ale_linters = {
+            \ 'javascript': ['eslint'],
+            \ }
+        let g:ale_fixers = {
+              \ 'javascript': ['eslint'],
+              \ 'python': ['autopep8', 'isort'],
+              \ 'markdown': [
+              \   {buffer, lines -> {'command': 'textlint -c ~/.config/textlintrc -o /dev/null --fix --no-color --quiet %t', 'read_temporary_file': 1}}
+              \   ],
+              \ }
+    '''
+
+[[plugins]]
     repo = 'tell-k/vim-autopep8'
     on_ft = ['python', 'python3']
     hook_add = '''
@@ -440,9 +441,6 @@
 [[plugins]]
     repo = 'derekwyatt/vim-scala'
     on_ft = ['scala']
-
-[[plugins]]
-    repo = 'vim-syntastic/syntastic'
 
 [[plugins]]
     repo = 'ktvoelker/sbt-vim'

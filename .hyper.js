@@ -106,6 +106,30 @@ module.exports = {
     hyperTabs:{
         tabIconsColored: true,
         trafficButtons: true,
+    },
+    paneNavigation: {
+      debug: false,
+      hotkeys: {
+        navigation: {
+          up: 'ctrl+alt+k',
+          down: 'ctrl+alt+j',
+          left: 'ctrl+alt+h',
+          right: 'ctrl+alt+l'
+        },
+        jump_prefix: 'ctrl+alt', // completed with 1-9 digits
+        permutation_modifier: 'shift', // Added to jump and navigation hotkeys for pane permutation
+        maximize: 'meta+enter'
+      },
+      showIndicators: true, // Show pane number
+      indicatorPrefix: '', // Will be completed with pane number
+      indicatorStyle: { // Added to indicator <div>
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        fontSize: '10px'
+      },
+      focusOnMouseHover: false,
+      inactivePaneOpacity: 0.6 // Set to 1 to disable inactive panes dimming
     }
 
     // if true, on right click selected text will be copied or pasted if no
