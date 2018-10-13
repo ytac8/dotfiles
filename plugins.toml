@@ -103,27 +103,6 @@
     repo = 'tpope/vim-rsi'
 
 [[plugins]]
-    repo = 'autozimu/LanguageClient-neovim'
-    rev = 'next'
-    build = 'bash install.sh'
-    hook_add = '''
-        set hidden
-        let g:LanguageClient_serverCommands = {
-            \ 'vue':['vls'],
-            \ 'html' : [],
-            \ 'css' : [],
-            \ 'javascript': ['javascript-typescript-stdio'],
-            \ 'typescript': ['javascript-typescript-stdio'],
-            \ }
-
-        nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-        nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-        nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
-        setlocal iskeyword+=$
-        setlocal iskeyword+=-
-    '''
-
-[[plugins]]
     repo = 'rhysd/clever-f.vim'
 
 [[plugins]]
@@ -448,6 +427,9 @@
 # go setting
 [[plugins]]
     repo = 'fatih/vim-go'
+    hook_add = '''
+        let g:go_version_warning = 0
+    '''
 
 [[plugins]]
     repo = 'zchee/deoplete-go'
