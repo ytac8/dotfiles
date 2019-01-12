@@ -13,6 +13,7 @@ module.exports = {
 
     // default font size in pixels for all tabs
     fontSize: 16,
+    fontWeight: 'bold',
 
     // font family with optional fallbacks
     fontFamily: 'Menlo, "DejaVu Sans Mono", Consolas, "Lucida Console", monospace',
@@ -154,8 +155,8 @@ module.exports = {
   plugins: [
     'hyper-hybrid-reduced-contrast',
     'hyper-pane',
-    'hyper-tabs-enhanced',
     'hypercwd',
+    'hyper-tab-icons',
   ],
 
   // in development, you can create a directory under

@@ -222,7 +222,6 @@ if dein#load_state(s:dein_dir)
   let s:toml = '~/.config/dein/plugins.toml'
   call dein#load_toml(s:toml, {'lazy': 0})
 
-  " call dein#add('altercation/vim-colors-solarized')
   call dein#add('w0ng/vim-hybrid')
   call dein#end()
   call dein#save_state()
