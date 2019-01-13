@@ -29,7 +29,7 @@ set clipboard=unnamed
 scriptencoding utf-8
 set encoding=utf-8
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-set colorcolumn=80 
+set colorcolumn=120
 set showmatch " 括弧の対応関係を一瞬表示する
 source $VIMRUNTIME/macros/matchit.vim " Vimの「%」を拡張する
 set wildmenu " コマンドモードの補完
@@ -124,6 +124,7 @@ vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v, '\/'), "\n", '\\n', 'g')<C
 
 " docstringは表示しない
 autocmd FileType python setlocal completeopt-=preview
+let g:python3_host_prog = expand('~/.pyenv/versions/anaconda3-5.3.1/bin/python')
 
 " 検索後にジャンプした際に検索単語を画面中央に持ってくる
 nnoremap n nzz
@@ -221,7 +222,6 @@ if dein#load_state(s:dein_dir)
   " 管理するプラグインを記述したファイル
   let s:toml = '~/.config/dein/plugins.toml'
   call dein#load_toml(s:toml, {'lazy': 0})
-
   call dein#add('w0ng/vim-hybrid')
   call dein#end()
   call dein#save_state()
@@ -235,7 +235,11 @@ endif
 
 let g:hybrid_custom_term_colors = 1
 let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
+
 filetype plugin indent on
 syntax enable
 set background=dark
 colorscheme hybrid
+
+highlight ALEErrorSign ctermfg=9 guifg=#cc6666
+highlight ALEWarningSign  ctermfg=10 guifg=#b5bd68

@@ -328,19 +328,6 @@
     on_ft = ['python', 'python3', 'djangohtml']
 
 [[plugins]]
-    repo = 'andviro/flake8-vim'
-    on_ft = ['python', 'python3', 'djangohtml']
-
-[[plugins]]
-    repo = 'hynek/vim-python-pep8-indent'
-    on_ft = ['python', 'python3', 'djangohtml']
-
-[[plugins]]
-    repo = 'lambdalisue/vim-pyenv'
-    depends = ['davidhalter/jedi-vim']
-    on_ft = ['python', 'python3', 'djangohtml']
-
-[[plugins]]
     repo = 'w0rp/ale'
     hook_add = '''
         let g:ale_lint_on_enter = 0
@@ -349,8 +336,12 @@
         let g:ale_fix_on_save = 1
         let g:ale_completion_enabled = 1
         let g:ale_linter_aliases = {'vue': 'css'}
+        let g:ale_python_flake8_options = '--max-line-length=120'
+        let g:ale_sign_error = "◉"
+        let g:ale_sign_warning = "◉"
         let g:ale_linters = {
             \ 'javascript': ['eslint'],
+            \ 'python': ['flake8', 'isort'],
             \ }
         let g:ale_fixers = {
               \ 'javascript': ['eslint'],

@@ -8,8 +8,7 @@ alias vim='nvim'
 
 #GOPATHの設定
 export GOPATH=$HOME 
-# neovim のコンフィグファイルの設定
-export XDG_CONFIG_HOME=$HOME/.config
+# neovim のコンフィグファイルの設定 export XDG_CONFIG_HOME=$HOME/.config
 
 # scala setting
 export PATH="${HOME}/.scalaenv/bin:${PATH}"
@@ -136,20 +135,6 @@ function mkcd() {
   fi
 }
 
-##############################
-# hyper term tabtitle setting
-##############################
-
-precmd() {
-   pwd=$(pwd)
-   cwd=${pwd##*/}
-   print -Pn "\e]0;$cwd\a"
-}
-
-preexec() {
-   if overridden; then return; fi
-   printf "\033]0;%s\a" "${1%% *} | $cwd"
-}
 
 ##############################
 # peco setting
