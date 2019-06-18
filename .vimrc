@@ -1,5 +1,4 @@
-" neccesary settings {{{
-" release autogroup in MyAutoCmd
+"neccesary settings {{{
 augroup MyAutoCmd
     autocmd!
 augroup END
@@ -125,6 +124,10 @@ vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v, '\/'), "\n", '\\n', 'g')<C
 " docstringは表示しない
 autocmd FileType python setlocal completeopt-=preview
 let g:python3_host_prog = expand('~/.pyenv/versions/anaconda3-5.3.1/bin/python')
+
+" golang setting
+autocmd FileType go :highlight goErr cterm=bold ctermfg=214
+autocmd FileType go :match goErr /\<err\>/
 
 " 検索後にジャンプした際に検索単語を画面中央に持ってくる
 nnoremap n nzz

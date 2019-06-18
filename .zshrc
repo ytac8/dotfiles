@@ -6,9 +6,15 @@ alias ls='gls --color=auto'
 # vimをneovimにする
 alias vim='nvim'
 
-#GOPATHの設定
-export GOPATH=$HOME 
-# neovim のコンフィグファイルの設定 export XDG_CONFIG_HOME=$HOME/.config
+#GO setting
+export GOPATH=$HOME
+export PATH=$GOPATH/bin:$PATH
+export GOENV_ROOT=$HOME/.goenv
+export PATH=$GOENV_ROOT/bin:$PATH
+eval "$(goenv init -)"
+
+# neovim のコンフィグファイルの設定 
+export XDG_CONFIG_HOME=$HOME/.config
 
 # scala setting
 export PATH="${HOME}/.scalaenv/bin:${PATH}"

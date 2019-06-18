@@ -150,7 +150,7 @@ module.exports = {
   //   `@company/project`
   //   `project#1.0.1`
   plugins: [
-    'hyper-iceberg',
+    'hyper-hybrid-reduced-contrast',
     'hyper-pane',
     'hyper-tabs-enhanced'
   ],

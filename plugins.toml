@@ -181,9 +181,6 @@
 [[plugins]]
     repo = 'Shougo/neosnippet-snippets'
 
-[[plugins]]
-    repo = 'othree/html5.vim'
-    on_ft = 'html'
 
 [[plugins]]
     repo = 'thinca/vim-quickrun'
@@ -337,6 +334,7 @@
         let g:ale_completion_enabled = 1
         let g:ale_linter_aliases = {'vue': 'css'}
         let g:ale_python_flake8_options = '--max-line-length=120'
+        let g:ale_python_autopep8_options = '--max-line-length=120'
         let g:ale_sign_error = "◉"
         let g:ale_sign_warning = "◉"
         let g:ale_linters = {
@@ -394,34 +392,86 @@
 # go setting
 [[plugins]]
     repo = 'fatih/vim-go'
+    on_ft = ['go']
     hook_add = '''
         let g:go_version_warning = 0
+        let g:go_highlight_functions = 1
+        let g:go_highlight_methods = 1
+        let g:go_highlight_structs = 1
     '''
 
 [[plugins]]
     repo = 'zchee/deoplete-go'
+    on_ft = ['go']
 
-[[plugins]]
-    repo = 'cespare/vim-toml'
+
 
 # javascript settings
 [[plugins]]
     repo = 'pangloss/vim-javascript'
+    on_ft = ['javascript', 'javascript.jsx', 'typescript']
 
 [[plugins]]
-    repo = 'mhartington/nvim-typescript'
+    repo = 'othree/yajs.vim'
+    on_ft = ['javascript','javascript.jsx', 'typescript']
+
+[[plugins]]
+    repo = 'othree/es.next.syntax.vim'
+    on_ft = ['javascript','javascript.jsx', 'typescript']
+
+[[plugin]]
+    repo ='othree/javascript-libraries-syntax.vim'
+    on_ft = ['javascript', 'javascript.jsx', 'typescript']
     hook_add = '''
-        let g:nvim_typesctipt#vue_support = 1 
+        let g:used_javascript_libs = 'jquery,underscore,react,flux,jasmine,d3'
+        let b:javascript_lib_use_jquery = 1
+        let b:javascript_lib_use_underscore = 1
+        let b:javascript_lib_use_react = 1
+        let b:javascript_lib_use_flux = 1
+        let b:javascript_lib_use_jasmine = 1
+        let b:javascript_lib_use_d3 = 1
     '''
 
 [[plugins]]
-    repo = 'posva/vim-vue'
+    repo = 'mhartington/nvim-typescript'
+    on_ft = ['javascript', 'javascript.jsx', 'typescript', 'typescript.tsx']
+    hook_add = '''
+        let g:nvim_typesctipt#vue_support = 1 
+
+    '''
+[[plugins]]
+    repo='maxmellon/vim-jsx-pretty'
+    on_ft = ['javascript', 'javascript.jsx', 'typescript', 'typescript.tsx']
+    hook_add = '''
+        let g:vim_jsx_pretty_highlight_close_tag = 1
+    '''
 
 [[plugins]]
-    repo = 'plasticboy/vim-markdown'
+    repo = 'ternjs/tern_for_vim'
+    on_ft = ['javascript', 'javascript.jsx', 'typescript', 'typescript.tsx']
 
+[[plugins]]
+    repo = 'posva/vim-vue'
+    on_ft = ['javascript', 'javascript.jsx', 'typescript', 'javascript.vue']
+
+# html
+[[plugins]]
+    repo = 'othree/html5.vim'
+    on_ft = 'html'
+
+# css
 [[plugins]]
     repo = 'tpope/vim-haml'
 
 [[plugins]]
     repo = 'cakebaker/scss-syntax.vim'
+
+# toml
+[[plugins]]
+    repo = 'cespare/vim-toml'
+    on_ft = 'toml'
+
+# markdown
+[[plugins]]
+    repo = 'plasticboy/vim-markdown'
+    on_ft = ['markdown', 'md']
