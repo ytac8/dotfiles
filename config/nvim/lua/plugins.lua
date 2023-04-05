@@ -63,6 +63,15 @@ return packer.startup(
         }
     )
 
+    -- formatter
+    use({
+        "jose-elias-alvarez/null-ls.nvim",
+        config = function()
+            require("null-ls").setup()
+        end,
+        requires = { "nvim-lua/plenary.nvim" },
+    })
+
     -- treesitter
     use {
         'nvim-treesitter/nvim-treesitter',
@@ -71,6 +80,8 @@ return packer.startup(
             ts_update()
         end,
     }
+
+    use({ "windwp/nvim-autopairs" }) -- Autopairs, integrates with both cmp and treesitter
 
     -- telescope
     use ({
@@ -106,6 +117,16 @@ return packer.startup(
     -- Colorschemes
     use ({ "catppuccin/nvim", as = "catppuccin" })
 
+    -- hop nvim (easy motion)
+    use {
+      'phaazon/hop.nvim',
+      branch = 'v2', -- optional but strongly recommended
+      config = function()
+        -- you can configure Hop the way you like here; see :h hop-config
+        require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
+      end
+    }
+
     -- UI
     use({
       "glepnir/lspsaga.nvim",
@@ -127,7 +148,6 @@ return packer.startup(
     })
 
 
-    use({ "windwp/nvim-autopairs" }) -- Autopairs, integrates with both cmp and treesitter
     use({ "akinsho/bufferline.nvim" })
 
   end

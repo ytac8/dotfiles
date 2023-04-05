@@ -33,6 +33,18 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep, opts)
 vim.keymap.set('n', '<leader>fb', ":Telescope file_browser<CR>", opts)
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, opts)
 
+--hop
+local hop = require('hop')
+vim.keymap.set("n", 'f', function()
+  hop.hint_char1({current_line_only = true})
+end, {remap=true})
+vim.keymap.set("v", 'f', function()
+  hop.hint_char1({current_line_only = true})
+end, {remap=true})
+vim.keymap.set("n", "F", "<Cmd>HopPattern<CR>")
+vim.keymap.set("n", "s", "<Cmd>HopWord<CR>")
+vim.keymap.set("v", "s", "<Cmd>HopWord<CR>")
+
 -- lspsaga
 local keymap = vim.keymap.set
 keymap("n", "gh", "<cmd>Lspsaga lsp_finder<CR>")

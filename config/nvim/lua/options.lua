@@ -6,8 +6,8 @@ local options = {
   swapfile = false,
   smarttab = true,
   expandtab = true,
-  tabstop = 2,
-  shiftwidth = 2,
+  tabstop = 4,
+  shiftwidth = 4,
   wrapscan = true,
   cursorline = true,
   virtualedit = "all",
@@ -31,7 +31,6 @@ local options = {
   textwidth = 0,
   backspace = "indent,eol,start",
   background = "dark"
-
 }
 
 for k, v in pairs(options) do
