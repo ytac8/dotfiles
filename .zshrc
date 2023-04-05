@@ -1,3 +1,16 @@
+# M1 mac setting
+typeset -U path PATH
+path=(
+  /opt/homebrew/bin(N-/)
+  /opt/homebrew/sbin(N-/)
+  /usr/bin
+  /usr/sbin
+  /bin
+  /sbin
+  /usr/local/bin(N-/)
+  /usr/local/sbin(N-/)
+  /Library/Apple/usr/bin
+)
 # zshrc setting
 source ~/.zplug/init.zsh
 
@@ -5,29 +18,27 @@ source ~/.zplug/init.zsh
 alias ls='gls --color=auto'
 # vimをneovimにする
 alias vim='nvim'
+# lazygit
+alias lg='lazygit'
 
 #GO setting
 export GOPATH=$HOME
-export PATH=$GOPATH/bin:$PATH
-export GOENV_ROOT=$HOME/.goenv
-export PATH=$GOENV_ROOT/bin:$PATH
+export GOENV_ROOT="$HOME/.goenv"
+export PATH="$GOENV_ROOT/bin:$PATH"
 eval "$(goenv init -)"
+
+
 
 # neovim のコンフィグファイルの設定 
 export XDG_CONFIG_HOME=$HOME/.config
 
-# scala setting
-export PATH="${HOME}/.scalaenv/bin:${PATH}"
-eval "$(scalaenv init -)"
-export JAVA_HOME='/usr/libexec/java_home -v 1.8'
-
 # pyenvのpath設定
 export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
-# node path setting
-export PATH=$HOME/.nodebrew/current/bin:$PATH
+# node
+export NVM_DIR="$HOME/.config/nvm"
 
 #terminalの色の設定
 export TERM=xterm-256color
@@ -35,6 +46,7 @@ export TERM=xterm-256color
 # 日本語を使用
 export LANG=ja_JP.UTF-8
 export LC_ALL=ja_JP.UTF-8
+export LC_CTYPE=UTF-8
 
 # パスを追加したい場合
 export PATH="$HOME/bin:$PATH"
@@ -184,19 +196,9 @@ zplug "hchbaw/opp.zsh"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug "zsh-users/zsh-completions"
 zplug "mrowa44/emojify", as:command
-zplug "peco/peco", as:command, from:gh-r
 zplug "b4b4r07/zsh-gomi", as:command, use:bin, rename-to:rm
 
-zplug "junegunn/fzf-bin", \
-    as:command, \
-    rename-to:"fzf", \
-    from:gh-r, \
-    use:"*darwin*amd64*"
 
-zplug "motemen/ghq", \
-    as:command, \
-    from:gh-r, \
-    rename-to:ghq
 
 zplug "mafredri/zsh-async", from:github
 zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
@@ -229,3 +231,13 @@ zstyle ':completion:*:default' menu select=2
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/01024194/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/01024194/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/01024194/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/01024194/google-cloud-sdk/completion.zsh.inc'; fi
+
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
