@@ -1,9 +1,12 @@
+local status, lualine = pcall(require, "lualine")
+if (not status) then return end
+
 require('lualine').setup {
   options = {
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' },
     icons_enabled = true,
-    theme = 'catppuccin',
+    theme = 'tokyonight',
     disabled_filetypes = {
       statusline = {},
       winbar = {},

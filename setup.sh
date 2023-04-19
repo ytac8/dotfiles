@@ -2,6 +2,7 @@
 ln -sf ~/ghq/github.com/ytac8/dotfiles/.zshrc ~/.zshrc
 ln -sf ~/ghq/github.com/ytac8/dotfiles/.skhdrc ~/.skhdrc
 ln -sf ~/ghq/github.com/ytac8/dotfiles/.yabairc ~/.yabairc
+ln -sf ~/ghq/github.com/ytac8/dotfiles/config/git ~/.config/
 ln -sf ~/ghq/github.com/ytac8/dotfiles/config/nvim ~/.config/
 ln -sf ~/ghq/github.com/ytac8/dotfiles/config/kitty ~/.config/
 ln -sf ~/ghq/github.com/ytac8/dotfiles/config/peco ~/.config/
@@ -19,6 +20,7 @@ brew install fzy
 brew install ghq
 brew install git
 brew install jesseduffield/lazygit/lazygit
+brew install jq
 brew install koekeishiya/formulae/skhd
 brew install koekeishiya/formulae/yabai
 brew install neovim
@@ -27,4 +29,3 @@ brew install pyenv
 brew install rcm
 brew install ripgrep
 brew install tig
-brew install zsh

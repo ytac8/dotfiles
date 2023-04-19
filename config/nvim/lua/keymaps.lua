@@ -27,12 +27,19 @@ keymap("v", "<C-c>", "<Esc>", opts)
 keymap("i", "<C-c>", "<Esc>", opts)
 
 -- telescope
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, opts)
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, opts)
-vim.keymap.set('n', '<leader>fb', ":Telescope file_browser<CR>", opts)
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, opts)
+local telescope = require('telescope')
+local telescope_builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', function() telescope_builtin.find_files({cwd=vim.fn.expand('%:p:h')}) end, opts)
+vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, opts)
+vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, opts)
+vim.keymap.set("n", "<leader>fd", '<Cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>fh', telescope_builtin.help_tags, opts)
 
+-- nvim tree
+vim.keymap.set('n', '<leader>tt', ":NvimTreeToggle<CR>", opts)
+vim.keymap.set('n', '<leader>tt', ":NvimTreeToggle<CR>", opts)
+vim.keymap.set('n', '<leader>tf', ":NvimTreeFocus<CR>", opts)
+ 
 --hop
 local hop = require('hop')
 vim.keymap.set("n", 'f', function()

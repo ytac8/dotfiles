@@ -23,14 +23,13 @@ local options = {
   shiftround = true,
   infercase = true,
   hidden = true,
-  switchbuf = "useopen",
   showmatch = true,
   matchtime = 3,
   list = true,
   wrap = true,
   textwidth = 0,
   backspace = "indent,eol,start",
-  background = "dark"
+  termguicolors = true,
 }
 
 for k, v in pairs(options) do

@@ -4,6 +4,10 @@ local sources = {
         filetypes = { "python" },
         extra_args = { "--line-length", "160" },
     }),
+    null_ls.builtins.formatting.isort.with({
+        filetypes = { "python" },
+        extra_args = { "--line-length", "160" },
+    }),
     null_ls.builtins.formatting.sqlfluff.with({
         extra_args = { "--dialect", "BigQuery" },
     }),
@@ -21,8 +25,8 @@ local on_attach = function(client, bufnr)
             group = augroup,
             buffer = bufnr,
             callback = function()
-                -- on 0.8, you should use vim.lsp.buf.format({ bufnr = bufnr }) instead
-                vim.lsp.buf.formatting_sync()
+                vim.lsp.buf.format({ bufnr = bufnr })
+                -- vim.lsp.buf.formatting_sync()
             end,
         })
     end

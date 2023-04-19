@@ -1,19 +1,14 @@
-local fn = vim.fn
-
--- Automatically install packer
-local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-if fn.empty(fn.glob(install_path)) > 0 then
-  PACKER_BOOTSTRAP = fn.system({
-    "git",
-    "clone",
-    "--depth",
-    "1",
-    "https://github.com/wbthomason/packer.nvim",
-    install_path,
-  })
-  print("Installing packer close and reopen Neovim...")
-  vim.cmd([[packadd packer.nvim]])
+local ensure_packer = function()
+  local fn = vim.fn
+  local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+  if fn.empty(fn.glob(install_path)) > 0 then
+    fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+    vim.cmd [[packadd packer.nvim]]
+    return true
+  end
+  return false
 end
+local packer_bootstrap = ensure_packer()
 
 -- Autocommand that reloads neovim whenever you save the plugins.lua file
 vim.cmd([[
@@ -23,7 +18,6 @@ vim.cmd([[
   augroup end
 ]])
 
--- Use a protected call so we don't error out on first use
 local status_ok, packer = pcall(require, "packer")
 if not status_ok then
   return
@@ -39,29 +33,23 @@ packer.init({
 })
 
 -- Install plugins here
-return packer.startup(
+packer.startup(
   function(use)
     -- cmp
-    use ({
-        'hrsh7th/nvim-cmp',
-        'hrsh7th/cmp-nvim-lsp',
-        'hrsh7th/cmp-nvim-lua',
-        'hrsh7th/cmp-buffer',
-        'hrsh7th/cmp-path',
-        'hrsh7th/cmp-cmdline',
-        'hrsh7th/vim-vsnip',
-        'hrsh7th/cmp-vsnip',
-        'onsails/lspkind.nvim',
-    })
+    use 'hrsh7th/nvim-cmp'
+    use 'hrsh7th/cmp-nvim-lsp'
+    use 'hrsh7th/cmp-nvim-lua'
+    use 'hrsh7th/cmp-buffer'
+    use 'hrsh7th/cmp-path'
+    use 'hrsh7th/cmp-cmdline'
+    use 'hrsh7th/vim-vsnip'
+    use 'hrsh7th/cmp-vsnip'
+    use 'onsails/lspkind.nvim'
 
     -- LSP
-    use (
-        {
-            "williamboman/mason.nvim",
-            "williamboman/mason-lspconfig.nvim",
-            "neovim/nvim-lspconfig",
-        }
-    )
+    use "williamboman/mason.nvim"
+    use "williamboman/mason-lspconfig.nvim"
+    use "neovim/nvim-lspconfig"
 
     -- formatter
     use({
@@ -81,8 +69,6 @@ return packer.startup(
         end,
     }
 
-    use({ "windwp/nvim-autopairs" }) -- Autopairs, integrates with both cmp and treesitter
-
     -- telescope
     use ({
       'nvim-telescope/telescope.nvim', tag = '0.1.1',
@@ -91,14 +77,23 @@ return packer.startup(
         'kyazdani42/nvim-web-devicons'
       }
     })
-    use ({
+
+    use {
         "nvim-telescope/telescope-file-browser.nvim",
-        requires = { 
-          'nvim-telescope/telescope.nvim',
-          'nvim-lua/plenary.nvim',
-          'kyazdani42/nvim-web-devicons'
-        }
-    })
+        requires = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+    }
+
+    -- nvim tree
+    use {
+      'nvim-tree/nvim-tree.lua',
+      requires = {
+        'nvim-tree/nvim-web-devicons',
+      },
+      config = function()
+        require("nvim-tree").setup {}
+      end
+    }
+
 
     -- git
     use ({
@@ -115,7 +110,8 @@ return packer.startup(
     })
 
     -- Colorschemes
-    use ({ "catppuccin/nvim", as = "catppuccin" })
+    use 'folke/tokyonight.nvim'
+
 
     -- hop nvim (easy motion)
     use {
@@ -126,6 +122,14 @@ return packer.startup(
         require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
       end
     }
+
+    -- auto comment
+    use ({
+        "terrortylor/nvim-comment",
+        config = function()
+            require("nvim_comment").setup()
+        end,
+    })
 
     -- UI
     use({
@@ -141,14 +145,15 @@ return packer.startup(
           {"nvim-treesitter/nvim-treesitter"}
         }
     })
+
     -- status line
     use ({
       'nvim-lualine/lualine.nvim',
       requires = {'kyazdani42/nvim-web-devicons', opt = true }
     })
 
-
-    use({ "akinsho/bufferline.nvim" })
-
+    if packer_bootstrap then
+        require('packer').sync()
+    end
   end
 )
