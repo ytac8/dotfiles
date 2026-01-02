@@ -1,0 +1,18 @@
+# .zshrc.local.example
+#
+# This is an example file for your local environment variables.
+# Copy this file to ~/.zshrc.local and add your actual secret values.
+#
+# DO NOT commit ~/.zshrc.local to git (it's in .gitignore)
+#
+# Usage:
+#   cp .zshrc.local.example ~/.zshrc.local
+#   vim ~/.zshrc.local  # Edit and add your actual values
+
+# AWS Configuration
+export AWS_PROFILE='your-aws-profile-name'
+
+# Cursor API Key
+export CURSOR_API_KEY='your_cursor_api_key_here'
+
+# Add any other secret environment variables below

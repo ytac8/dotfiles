@@ -1,0 +1,29 @@
+theme = catppuccin-mocha
+
+# OptionキーをAlt(Meta)キーとして扱う設定
+
+# font
+font-family = PlemolJP Medium
+font-size = 18
+font-feature = -calt
+font-feature = -dlig
+# font-feature = -liga
+
+window-padding-x = 20
+window-padding-y = 5
+window-padding-balance = true
+window-theme = ghostty
+# background-opacity = 0.85
+# background-blur-radius = 20
+# macos-titlebar-style = transparent
+
+# cursor
+cursor-style = block
+cursor-style-blink = false
+cursor-invert-fg-bg = true
+cursor-opacity = 0.8
+
+# binding for zellij
+macos-option-as-alt = true
+keybind = alt+left=unbind
+keybind = alt+right=unbind

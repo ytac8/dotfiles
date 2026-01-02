@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Local environment files (contains secrets)
+.zshrc.local
+.env
+.env.local
+
+# Editor
+.vscode/
+.idea/
+
+# Backup files
+*.bak
+*~
