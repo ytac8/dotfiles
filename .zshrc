@@ -33,9 +33,17 @@ fi
 # fzf で ghq で git リポジトリ選択
 alias g='cd $(ghq root)/$(ghq list | fzf --reverse)'
 
+# git worktree 間移動
+function gw() {
+  local worktree_path=$(git worktree list | awk '{print $1}' | fzf --reverse --preview 'git -C {} log --oneline -10 --color=always' --preview-window=right:50%)
+  if [ -n "$worktree_path" ]; then
+    cd "$worktree_path"
+  fi
+}
+
 # fzf コマンド履歴検索
 function fzf-select-history() {
-    BUFFER=$(history -n -r 1 | fzf --query "$LBUFFER" --reverse --no-sort)
+    BUFFER=$(history -n 1 | fzf --query "$LBUFFER" --tac --no-sort)
     CURSOR=$#BUFFER
     zle reset-prompt
 }
@@ -110,7 +118,7 @@ stty erase ^H
 bindkey "^[[3~" delete-char
 
 # cdの後にlsを実行
-chpwd() { ls -la }
+chpwd() { ls -l }
 
 # どこからでも参照できるディレクトリパス
 cdpath=(~)
