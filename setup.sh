@@ -16,7 +16,11 @@ ln -sf "$DOTFILES_DIR/config/zellij" ~/.config/
 curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 
 # brew install
-/bin/zsh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Set Homebrew PATH for Apple Silicon
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 brew install btop
 brew install cmake
 brew install coreutils
@@ -58,4 +62,7 @@ yabai --start-service
 skhd --start-service
 
 # mise completion
-mise completion zsh  > /usr/local/share/zsh/site-functions/_mise
+/opt/homebrew/bin/mise completion zsh  > /opt/homebrew/share/zsh/site-functions/_mise
+
+# claude 
+curl -fsSL https://claude.ai/install.sh | bash

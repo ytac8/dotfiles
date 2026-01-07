@@ -1,5 +1,6 @@
 [tools]
-node = "22"
+node = "24.5.0"
+"npm:@anthropic-ai/claude-code" = "latest"
 python = "3.12"
 rust = "latest"
 uv = "latest"

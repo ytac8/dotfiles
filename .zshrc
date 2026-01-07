@@ -33,9 +33,11 @@ fi
 # fzf で ghq で git リポジトリ選択
 alias g='cd $(ghq root)/$(ghq list | fzf --reverse)'
 
+# git worktree runner のalias
+alias gwr='git gtr'
 # git worktree 間移動
 function gw() {
-  local worktree_path=$(git worktree list | awk '{print $1}' | fzf --reverse --preview 'git -C {} log --oneline -10 --color=always' --preview-window=right:50%)
+  local worktree_path=$(git worktree list | awk '{print $1}' | fzf --reverse --preview 'git -C {} log --oneline -10 --color=always' --preview-window=down:40% --bind 'ctrl-/:toggle-preview')
   if [ -n "$worktree_path" ]; then
     cd "$worktree_path"
   fi
@@ -43,7 +45,7 @@ function gw() {
 
 # fzf コマンド履歴検索
 function fzf-select-history() {
-    BUFFER=$(history -n 1 | fzf --query "$LBUFFER" --tac --no-sort)
+    BUFFER=$(history -n 1 | fzf --query "$LBUFFER" --tac --no-sort --layout=reverse)
     CURSOR=$#BUFFER
     zle reset-prompt
 }

@@ -51,6 +51,9 @@ fonts_list=(
   font-tinos-nerd-font
   font-ubuntu-nerd-font
   font-victor-mono-nerd-font
+  font-maple-mono
+  font-maple-mono-nf
+  font-maple-mono-nf-cn
 )
 
 brew tap homebrew/cask-fonts

@@ -3,7 +3,7 @@ theme = catppuccin-mocha
 # OptionキーをAlt(Meta)キーとして扱う設定
 
 # font
-font-family = PlemolJP Medium
+font-family = MapleMono-NF-CN
 font-size = 18
 font-feature = -calt
 font-feature = -dlig
