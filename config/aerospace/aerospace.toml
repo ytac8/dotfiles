@@ -12,6 +12,12 @@ after-startup-command = ['exec-and-forget borders', 'exec-and-forget sketchybar'
 # Start AeroSpace at login
 start-at-login = true
 
+# Notify sketchybar about workspace changes
+exec-on-workspace-change = ['exec-and-forget sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE']
+
+# Notify sketchybar when focus changes
+on-focus-changed = ['exec-and-forget sketchybar --trigger front_app_switched']
+
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
@@ -217,3 +223,7 @@ on-mode-changed = []
     alt-shift-j = ['join-with down', 'mode main']
     alt-shift-k = ['join-with up', 'mode main']
     alt-shift-l = ['join-with right', 'mode main']
+
+# Notify sketchybar when windows are opened/closed
+[[on-window-detected]]
+run = 'exec-and-forget sketchybar --trigger aerospace_workspace_change'
