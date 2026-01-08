@@ -179,3 +179,4 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # git gtr setting
 export PATH="$PATH:$HOME/ghq/github.com/coderabbitai/git-worktree-runner/bin"
+ulimit -n 10240
