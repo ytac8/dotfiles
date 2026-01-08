@@ -21,9 +21,7 @@ local app_icons = require("helpers.icon_map")
 -- - ディスプレイの接続順序が変わっても自動的に対応
 
 -- すべての可能なworkspace名
-local all_workspaces = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-                        "A", "B", "C", "D", "E", "F", "G", "I", "M", "N",
-                        "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+local all_workspaces = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
 
 -- ディスプレイ数（最大3を想定）
 local num_displays = 3
@@ -318,152 +316,117 @@ for display_id = 1, num_displays do
 	end
 end
 
--- Workspace表示を動的更新する関数
-local function update_workspace_visibility()
-	if not mapping_ready then return end
-	for display_id = 1, num_displays do
-		local monitor_id = display_to_monitor[display_id]
-		if not monitor_id then monitor_id = display_id end -- fallback
-		sbar.exec("aerospace list-workspaces --monitor " .. monitor_id, function(output)
-			-- 各ディスプレイの現在のworkspaceリストを取得
-			local active_workspaces = {}
-			for ws_name in string.gmatch(output, "[^\r\n]+") do
-				if ws_name ~= "" then
-					table.insert(active_workspaces, ws_name)
-				end
-			end
-
-			-- 最大10個まで表示
-			local visible_workspaces = {}
-			for i = 1, math.min(10, #active_workspaces) do
-				visible_workspaces[active_workspaces[i]] = true
-			end
-
-			-- すべてのworkspaceアイテムの表示状態を更新
-			for ws_name, workspace_item in pairs(workspaces[display_id]) do
-				local should_show = visible_workspaces[ws_name] == true
-				workspace_item:set({ drawing = should_show })
-
-				-- Paddingも更新
-				local padding_item = workspace_paddings[display_id][ws_name]
-				if padding_item then
-					padding_item:set({ drawing = should_show })
-				end
-			end
-		end)
-	end
-end
-
--- Workspaceハイライト更新関数（フォーカス中 + 各ディスプレイで表示中）
-local function update_workspace_highlight(focused_workspace_hint)
+-- 統合更新関数: 1回のbash実行で全情報を取得し、visibility + highlight + iconsを更新
+local function update_all_workspaces()
 	if not mapping_ready then return end
 
-	-- 全情報を一度に取得（asyncの問題を避けるため）
+	-- 全情報を1回のbashスクリプトで取得（割り当て済みworkspaceのみアプリ情報取得）
 	local cmd = [[
-focused=$(aerospace list-workspaces --focused 2>/dev/null | tr -d '\n')
-echo "focused:$focused"
+echo "FOCUSED:$(aerospace list-workspaces --focused 2>/dev/null | tr -d '\n')"
+assigned_ws=""
 for m in 1 2 3; do
-  vis=$(aerospace list-workspaces --monitor $m --visible 2>/dev/null | tr -d '\n')
-  echo "monitor:$m:$vis"
+  echo "VISIBLE:$m:$(aerospace list-workspaces --monitor $m --visible 2>/dev/null | tr -d '\n')"
+  for ws in $(aerospace list-workspaces --monitor $m 2>/dev/null); do
+    [ -n "$ws" ] && echo "ASSIGNED:$m:$ws" && assigned_ws="$assigned_ws $ws"
+  done
+done
+for ws in $assigned_ws; do
+  apps=$(aerospace list-windows --workspace "$ws" --format '%{app-name}' 2>/dev/null | tr '\n' '|')
+  [ -n "$apps" ] && echo "APPS:$ws:$apps"
 done
 ]]
 	sbar.exec(cmd, function(output)
 		local focused_workspace = ""
-		local monitor_visible = {} -- monitor_id -> visible_workspace
+		local monitor_visible = {}    -- monitor_id -> visible_workspace
+		local monitor_assigned = {}   -- monitor_id -> {workspace_name -> true}
+		local workspace_apps = {}     -- workspace_name -> "app1|app2|..."
 
+		-- パース
 		for line in output:gmatch("[^\r\n]+") do
-			local f = line:match("^focused:(.*)$")
-			if f then
-				focused_workspace = f
+			local f = line:match("^FOCUSED:(.*)$")
+			if f then focused_workspace = f end
+
+			local m, v = line:match("^VISIBLE:(%d+):(.*)$")
+			if m and v then monitor_visible[tonumber(m)] = v end
+
+			local m2, ws = line:match("^ASSIGNED:(%d+):(.+)$")
+			if m2 and ws then
+				local mid = tonumber(m2)
+				if not monitor_assigned[mid] then monitor_assigned[mid] = {} end
+				monitor_assigned[mid][ws] = true
 			end
-			local m, v = line:match("^monitor:(%d+):(.*)$")
-			if m and v then
-				monitor_visible[tonumber(m)] = v
-			end
+
+			local ws2, apps = line:match("^APPS:(.+):(.+)$")
+			if ws2 and apps then workspace_apps[ws2] = apps end
 		end
 
-		-- フォールバック
-		if focused_workspace == "" and focused_workspace_hint then
-			focused_workspace = focused_workspace_hint:gsub("%s+", "")
-		end
-
-		-- まず全workspaceのハイライトをリセット
-		for display_id = 1, num_displays do
-			for ws_name, workspace_item in pairs(workspaces[display_id]) do
-				workspace_item:set({
-					icon = { highlight = false },
-					label = { highlight = false },
-					background = {
-						height = 22,
-						border_color = colors.transparent,
-						color = colors.transparent,
-						border_width = 0,
-						corner_radius = 0,
-					},
-				})
-			end
-		end
-
-		-- 各ディスプレイの表示中workspaceをハイライト
+		-- 各ディスプレイを更新
 		for display_id = 1, num_displays do
 			local monitor_id = display_to_monitor[display_id]
 			if not monitor_id then monitor_id = display_id end
 
+			local assigned = monitor_assigned[monitor_id] or {}
 			local visible_ws = monitor_visible[monitor_id] or ""
-			if visible_ws ~= "" then
-				local workspace_item = workspaces[display_id][visible_ws]
-				if workspace_item then
-					local is_focused = (visible_ws == focused_workspace)
-					local ws_color = colors_spaces[tonumber(visible_ws)] or colors.grey
 
-					workspace_item:set({
-						icon = { highlight = is_focused },
-						label = { highlight = is_focused },
-						background = {
-							height = 25,
-							border_color = ws_color,
-							border_width = 2,
-							color = is_focused and ws_color or colors.transparent,
-							corner_radius = 6,
-						},
-					})
+			-- 全workspaceを更新（assignedならdrawing=true）
+			for ws_name, workspace_item in pairs(workspaces[display_id]) do
+				local should_show = assigned[ws_name] == true
+
+				-- ハイライト計算
+				local is_visible = (ws_name == visible_ws)
+				local is_focused = is_visible and (ws_name == focused_workspace)
+				local ws_color = colors_spaces[tonumber(ws_name)] or colors.grey
+
+				-- アイコン計算
+				local apps_str = workspace_apps[ws_name] or ""
+				local icon_line = ""
+				local seen_apps = {}
+				for app in apps_str:gmatch("[^|]+") do
+					if app ~= "" and not seen_apps[app] then
+						seen_apps[app] = true
+						local lookup = app_icons[app]
+						local icon = lookup or app_icons["default"]
+						icon_line = icon_line .. utf8.char(0x202F) .. icon
+					end
+				end
+				if icon_line == "" then icon_line = "—" end
+
+				-- 一括設定
+				workspace_item:set({
+					drawing = should_show,
+					icon = { highlight = is_focused },
+					label = { string = icon_line, highlight = is_focused },
+					background = {
+						height = is_visible and 25 or 22,
+						border_color = is_visible and ws_color or colors.transparent,
+						border_width = is_visible and 2 or 0,
+						color = is_focused and ws_color or colors.transparent,
+						corner_radius = is_visible and 6 or 0,
+					},
+				})
+
+				-- Padding更新
+				local padding_item = workspace_paddings[display_id][ws_name]
+				if padding_item then
+					padding_item:set({ drawing = should_show })
 				end
 			end
 		end
 	end)
 end
 
--- Window Icon更新関数（全ディスプレイ・全workspace対応）
+-- 互換性のための関数（統合関数を呼ぶだけ）
+local function update_workspace_visibility()
+	update_all_workspaces()
+end
+
+local function update_workspace_highlight(focused_workspace_hint)
+	update_all_workspaces()
+end
+
+-- Window Icon更新関数（互換性のため残す、統合関数を呼ぶだけ）
 local function update_workspace_icons()
-	-- すべてのディスプレイの全workspaceのアイコンを更新
-	for display_id = 1, num_displays do
-		for ws_name, workspace_item in pairs(workspaces[display_id]) do
-			sbar.exec("aerospace list-windows --workspace " .. ws_name .. " --format '%{app-name}' 2>/dev/null", function(apps_output)
-				local icon_line = ""
-				local no_app = true
-				local seen_apps = {}
-
-				-- Parse each app name from output
-				for app in string.gmatch(apps_output, "[^\r\n]+") do
-					if app ~= "" and not seen_apps[app] then
-						no_app = false
-						seen_apps[app] = true
-						local lookup = app_icons[app]
-						local icon = ((lookup == nil) and app_icons["default"] or lookup)
-						icon_line = icon_line .. utf8.char(0x202F) .. icon
-					end
-				end
-
-				if no_app then
-					icon_line = "—"
-				end
-
-				sbar.animate("tanh", 10, function()
-					workspace_item:set({ label = icon_line })
-				end)
-			end)
-		end
-	end
+	-- update_all_workspaces()に統合済み、何もしない
 end
 
 -- Workspace変更時に表示を更新
@@ -472,51 +435,34 @@ local workspace_observer = sbar.add("item", {
 	updates = true,
 })
 
+-- aerospace_workspace_change: workspace切り替え・移動時
 workspace_observer:subscribe("aerospace_workspace_change", function(env)
-	-- マッピングが準備できていない場合はスキップ
 	if not mapping_ready then return end
-	-- Workspace割り当てが変わった可能性があるため、表示を更新
-	update_workspace_visibility()
-	-- ハイライト更新（フォーカス中 + 表示中のworkspace）
-	update_workspace_highlight(env.FOCUSED_WORKSPACE)
-	-- アイコンも更新
-	update_workspace_icons()
+	update_all_workspaces()
 end)
 
--- front_app_switchedでもハイライトを更新（フォーカス移動時に確実に反映）
+-- front_app_switched: フォーカス移動時
 workspace_observer:subscribe("front_app_switched", function(env)
 	if not mapping_ready then return end
-	update_workspace_highlight()
+	update_all_workspaces()
 end)
 
--- system_woke: スリープ復帰時に全体更新
+-- system_woke: スリープ復帰時（マッピング再構築）
 workspace_observer:subscribe("system_woke", function(env)
-	-- マッピングを再構築（ディスプレイ構成が変わっている可能性）
 	build_display_mapping(function()
-		update_workspace_visibility()
-		update_workspace_highlight()
-		update_workspace_icons()
+		update_all_workspaces()
 	end)
 end)
 
--- display_change: ディスプレイ接続/切断時に全体更新
+-- display_change: ディスプレイ接続/切断時（マッピング再構築）
 workspace_observer:subscribe("display_change", function(env)
-	-- マッピングを再構築
 	build_display_mapping(function()
-		update_workspace_visibility()
-		update_workspace_highlight()
-		update_workspace_icons()
+		update_all_workspaces()
 	end)
 end)
 
 -- 初回: マッピングを構築してから更新
 build_display_mapping(function()
-	update_workspace_visibility()
-	-- 初回のハイライト更新（フォーカス中workspaceを取得）
-	sbar.exec("aerospace list-workspaces --focused", function(focused)
-		focused = focused:gsub("%s+", "")
-		update_workspace_highlight(focused)
-	end)
-	update_workspace_icons()
+	update_all_workspaces()
 end)
 
