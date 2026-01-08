@@ -223,31 +223,8 @@ spaces_indicator:subscribe("mouse.clicked", function(env)
 	sbar.trigger("swap_menus_and_spaces")
 end)
 
-local front_app_icon = sbar.add("item", "front_app_icon", {
-	display = "active",
-	icon = { drawing = false },
-	label = {
-		font = "sketchybar-app-font-bg:Regular:21.0",
-	},
-	updates = true,
-	padding_right = 0,
-	padding_left = -10,
-})
-
-front_app_icon:subscribe("front_app_switched", function(env)
-	sbar.exec("aerospace list-windows --focused --format '%{app-name}' 2>/dev/null | head -n 1", function(app_name)
-		app_name = app_name:gsub("^%s+", ""):gsub("%s+$", "") -- trim leading/trailing whitespace only
-		if app_name ~= "" then
-			local lookup = app_icons[app_name]
-			local icon = ((lookup == nil) and app_icons["default"] or lookup)
-			front_app_icon:set({ label = { string = icon, color = colors.accent1 } })
-		end
-	end)
-end)
-
 sbar.add("bracket", {
 	spaces_indicator.name,
-	front_app_icon.name,
 }, {
 	background = {
 		color = colors.tn_black3,
@@ -256,7 +233,7 @@ sbar.add("bracket", {
 	},
 })
 
-sbar.add("item", { width = 6 })
+sbar.add("item", { width = 18 })
 
 -- すべてのworkspaceアイテムを事前作成（初期状態は非表示）
 for display_id = 1, num_displays do
@@ -397,7 +374,7 @@ done
 					icon = { highlight = is_focused },
 					label = { string = icon_line, highlight = is_focused },
 					background = {
-						height = is_visible and 25 or 22,
+						height = is_visible and 34 or 22,
 						border_color = is_visible and ws_color or colors.transparent,
 						border_width = is_visible and 2 or 0,
 						color = is_focused and ws_color or colors.transparent,

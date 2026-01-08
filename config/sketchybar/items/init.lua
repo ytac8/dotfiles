@@ -1,6 +1,5 @@
 require("items.paw")
 require("items.spaces")
 require("items.menus")
--- require("items.front_app")
 require("items.widgets")
 require("items.media")
