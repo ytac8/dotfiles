@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# worktree
+.worktree
+
 # Local environment files (contains secrets)
 .zshrc.local
 .env
