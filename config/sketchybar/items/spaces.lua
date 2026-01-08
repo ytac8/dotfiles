@@ -21,7 +21,7 @@ local app_icons = require("helpers.icon_map")
 -- - ディスプレイの接続順序が変わっても自動的に対応
 
 -- すべての可能なworkspace名
-local all_workspaces = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+local all_workspaces = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
                         "A", "B", "C", "D", "E", "F", "G", "I", "M", "N",
                         "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 
@@ -139,6 +139,7 @@ local workspaces = {}
 local workspace_paddings = {}
 
 local colors_spaces = {
+	[0] = colors.cmap_10,  -- workspace 0用
 	[1] = colors.cmap_1,
 	[2] = colors.cmap_2,
 	[3] = colors.cmap_3,
@@ -148,7 +149,6 @@ local colors_spaces = {
 	[7] = colors.cmap_7,
 	[8] = colors.cmap_8,
 	[9] = colors.cmap_9,
-	[10] = colors.cmap_10,
 }
 
 -- spaces_indicator + front_app_icon (workspacesより前に配置)
@@ -355,33 +355,61 @@ local function update_workspace_visibility()
 end
 
 -- Workspaceハイライト更新関数（フォーカス中 + 各ディスプレイで表示中）
-local function update_workspace_highlight(focused_workspace)
+local function update_workspace_highlight(focused_workspace_hint)
 	if not mapping_ready then return end
 
-	-- まず全workspaceのハイライトをリセット
-	for display_id = 1, num_displays do
-		for ws_name, workspace_item in pairs(workspaces[display_id]) do
-			workspace_item:set({
-				icon = { highlight = false },
-				label = { highlight = false },
-				background = {
-					height = 22,
-					border_color = colors.transparent,
-					color = colors.transparent,
-					border_width = 0,
-					corner_radius = 0,
-				},
-			})
+	-- 全情報を一度に取得（asyncの問題を避けるため）
+	local cmd = [[
+focused=$(aerospace list-workspaces --focused 2>/dev/null | tr -d '\n')
+echo "focused:$focused"
+for m in 1 2 3; do
+  vis=$(aerospace list-workspaces --monitor $m --visible 2>/dev/null | tr -d '\n')
+  echo "monitor:$m:$vis"
+done
+]]
+	sbar.exec(cmd, function(output)
+		local focused_workspace = ""
+		local monitor_visible = {} -- monitor_id -> visible_workspace
+
+		for line in output:gmatch("[^\r\n]+") do
+			local f = line:match("^focused:(.*)$")
+			if f then
+				focused_workspace = f
+			end
+			local m, v = line:match("^monitor:(%d+):(.*)$")
+			if m and v then
+				monitor_visible[tonumber(m)] = v
+			end
 		end
-	end
 
-	-- 各ディスプレイの表示中workspaceを取得してハイライト
-	for display_id = 1, num_displays do
-		local monitor_id = display_to_monitor[display_id]
-		if not monitor_id then monitor_id = display_id end
+		-- フォールバック
+		if focused_workspace == "" and focused_workspace_hint then
+			focused_workspace = focused_workspace_hint:gsub("%s+", "")
+		end
 
-		sbar.exec("aerospace list-workspaces --monitor " .. monitor_id .. " --visible", function(visible_ws)
-			visible_ws = visible_ws:gsub("%s+", "") -- trim
+		-- まず全workspaceのハイライトをリセット
+		for display_id = 1, num_displays do
+			for ws_name, workspace_item in pairs(workspaces[display_id]) do
+				workspace_item:set({
+					icon = { highlight = false },
+					label = { highlight = false },
+					background = {
+						height = 22,
+						border_color = colors.transparent,
+						color = colors.transparent,
+						border_width = 0,
+						corner_radius = 0,
+					},
+				})
+			end
+		end
+
+		-- 各ディスプレイの表示中workspaceをハイライト
+		for display_id = 1, num_displays do
+			local monitor_id = display_to_monitor[display_id]
+			if not monitor_id then monitor_id = display_id end
+
+			local visible_ws = monitor_visible[monitor_id] or ""
 			if visible_ws ~= "" then
 				local workspace_item = workspaces[display_id][visible_ws]
 				if workspace_item then
@@ -393,7 +421,6 @@ local function update_workspace_highlight(focused_workspace)
 						label = { highlight = is_focused },
 						background = {
 							height = 25,
-							-- フォーカス中: 背景色あり、表示中のみ: 枠線のみ
 							border_color = ws_color,
 							border_width = 2,
 							color = is_focused and ws_color or colors.transparent,
@@ -402,8 +429,8 @@ local function update_workspace_highlight(focused_workspace)
 					})
 				end
 			end
-		end)
-	end
+		end
+	end)
 end
 
 -- Window Icon更新関数（全ディスプレイ・全workspace対応）
@@ -454,6 +481,32 @@ workspace_observer:subscribe("aerospace_workspace_change", function(env)
 	update_workspace_highlight(env.FOCUSED_WORKSPACE)
 	-- アイコンも更新
 	update_workspace_icons()
+end)
+
+-- front_app_switchedでもハイライトを更新（フォーカス移動時に確実に反映）
+workspace_observer:subscribe("front_app_switched", function(env)
+	if not mapping_ready then return end
+	update_workspace_highlight()
+end)
+
+-- system_woke: スリープ復帰時に全体更新
+workspace_observer:subscribe("system_woke", function(env)
+	-- マッピングを再構築（ディスプレイ構成が変わっている可能性）
+	build_display_mapping(function()
+		update_workspace_visibility()
+		update_workspace_highlight()
+		update_workspace_icons()
+	end)
+end)
+
+-- display_change: ディスプレイ接続/切断時に全体更新
+workspace_observer:subscribe("display_change", function(env)
+	-- マッピングを再構築
+	build_display_mapping(function()
+		update_workspace_visibility()
+		update_workspace_highlight()
+		update_workspace_icons()
+	end)
 end)
 
 -- 初回: マッピングを構築してから更新
