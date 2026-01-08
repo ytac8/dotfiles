@@ -1,9 +1,9 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
-	event = { "VeryLazy" },
+	event = { "BufReadPost", "BufNewFile", "BufReadPre" },
 	config = function()
-		require("nvim-treesitter.configs").setup({
-			ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
+		require("nvim-treesitter.config").setup({
+			ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "bash", "python", "typescript", "go" },
 			sync_install = false,
 			auto_install = true,
 			highlight = {

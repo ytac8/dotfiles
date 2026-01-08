@@ -4,6 +4,7 @@ local options = {
   title = true,
   backup = false,
   swapfile = false,
+  writebackup = false,
   smarttab = true,
   expandtab = true,
   tabstop = 4,
