@@ -151,6 +151,115 @@ local colors_spaces = {
 	[10] = colors.cmap_10,
 }
 
+-- spaces_indicator + front_app_icon (workspacesより前に配置)
+local spaces_indicator = sbar.add("item", {
+	background = {
+		color = colors.with_alpha(colors.grey, 0.0),
+		border_color = colors.with_alpha(colors.bg1, 0.0),
+		border_width = 0,
+		corner_radius = 6,
+		height = 24,
+		padding_left = 6,
+		padding_right = 6,
+	},
+	icon = {
+		font = {
+			family = settings.font.text,
+			style = settings.font.style_map["Bold"],
+			size = 14.0,
+		},
+		padding_left = 6,
+		padding_right = 9,
+		color = colors.accent1,
+		string = icons.switch.on,
+	},
+	label = {
+		drawing = "off",
+		padding_left = 0,
+		padding_right = 0,
+	},
+})
+
+spaces_indicator:subscribe("swap_menus_and_spaces", function(env)
+	local currently_on = spaces_indicator:query().icon.value == icons.switch.on
+	spaces_indicator:set({
+		icon = currently_on and icons.switch.off or icons.switch.on,
+	})
+end)
+
+spaces_indicator:subscribe("mouse.entered", function(env)
+	sbar.animate("tanh", 30, function()
+		spaces_indicator:set({
+			background = {
+				color = colors.tn_black1,
+				border_color = { alpha = 1.0 },
+				padding_left = 6,
+				padding_right = 6,
+			},
+			icon = {
+				color = colors.accent1,
+				padding_left = 6,
+				padding_right = 9,
+			},
+			label = { drawing = "off" },
+			padding_left = 6,
+			padding_right = 6,
+		})
+	end)
+end)
+
+spaces_indicator:subscribe("mouse.exited", function(env)
+	sbar.animate("tanh", 30, function()
+		spaces_indicator:set({
+			background = {
+				color = { alpha = 0.0 },
+				border_color = { alpha = 0.0 },
+			},
+			icon = { color = colors.accent1 },
+			label = { width = 0 },
+		})
+	end)
+end)
+
+spaces_indicator:subscribe("mouse.clicked", function(env)
+	sbar.trigger("swap_menus_and_spaces")
+end)
+
+local front_app_icon = sbar.add("item", "front_app_icon", {
+	display = "active",
+	icon = { drawing = false },
+	label = {
+		font = "sketchybar-app-font-bg:Regular:21.0",
+	},
+	updates = true,
+	padding_right = 0,
+	padding_left = -10,
+})
+
+front_app_icon:subscribe("front_app_switched", function(env)
+	sbar.exec("aerospace list-windows --focused --format '%{app-name}' 2>/dev/null | head -n 1", function(app_name)
+		app_name = app_name:gsub("^%s+", ""):gsub("%s+$", "") -- trim leading/trailing whitespace only
+		if app_name ~= "" then
+			local lookup = app_icons[app_name]
+			local icon = ((lookup == nil) and app_icons["default"] or lookup)
+			front_app_icon:set({ label = { string = icon, color = colors.accent1 } })
+		end
+	end)
+end)
+
+sbar.add("bracket", {
+	spaces_indicator.name,
+	front_app_icon.name,
+}, {
+	background = {
+		color = colors.tn_black3,
+		border_color = colors.accent1,
+		border_width = 2,
+	},
+})
+
+sbar.add("item", { width = 6 })
+
 -- すべてのworkspaceアイテムを事前作成（初期状態は非表示）
 for display_id = 1, num_displays do
 	workspaces[display_id] = {}
@@ -201,21 +310,7 @@ for display_id = 1, num_displays do
 
 		workspace_paddings[display_id][ws_name] = padding
 
-		-- Event subscriptions
-		workspace:subscribe("aerospace_workspace_change", function(env)
-			local focused_workspace = env.FOCUSED_WORKSPACE
-			local selected = focused_workspace == ws_name
-			workspace:set({
-				icon = { highlight = selected },
-				label = { highlight = selected },
-				background = {
-					height = 25,
-					border_color = selected and (colors_spaces[tonumber(ws_name)] or colors.grey) or colors.transparent,
-					color = selected and (colors_spaces[tonumber(ws_name)] or colors.grey) or colors.transparent,
-					corner_radius = selected and 6 or 0,
-				},
-			})
-		end)
+		-- Event subscriptions (フォーカス状態はupdate_workspace_highlight関数で更新)
 
 		workspace:subscribe("mouse.clicked", function(env)
 			sbar.exec("aerospace workspace " .. ws_name)
@@ -253,6 +348,58 @@ local function update_workspace_visibility()
 				local padding_item = workspace_paddings[display_id][ws_name]
 				if padding_item then
 					padding_item:set({ drawing = should_show })
+				end
+			end
+		end)
+	end
+end
+
+-- Workspaceハイライト更新関数（フォーカス中 + 各ディスプレイで表示中）
+local function update_workspace_highlight(focused_workspace)
+	if not mapping_ready then return end
+
+	-- まず全workspaceのハイライトをリセット
+	for display_id = 1, num_displays do
+		for ws_name, workspace_item in pairs(workspaces[display_id]) do
+			workspace_item:set({
+				icon = { highlight = false },
+				label = { highlight = false },
+				background = {
+					height = 22,
+					border_color = colors.transparent,
+					color = colors.transparent,
+					border_width = 0,
+					corner_radius = 0,
+				},
+			})
+		end
+	end
+
+	-- 各ディスプレイの表示中workspaceを取得してハイライト
+	for display_id = 1, num_displays do
+		local monitor_id = display_to_monitor[display_id]
+		if not monitor_id then monitor_id = display_id end
+
+		sbar.exec("aerospace list-workspaces --monitor " .. monitor_id .. " --visible", function(visible_ws)
+			visible_ws = visible_ws:gsub("%s+", "") -- trim
+			if visible_ws ~= "" then
+				local workspace_item = workspaces[display_id][visible_ws]
+				if workspace_item then
+					local is_focused = (visible_ws == focused_workspace)
+					local ws_color = colors_spaces[tonumber(visible_ws)] or colors.grey
+
+					workspace_item:set({
+						icon = { highlight = is_focused },
+						label = { highlight = is_focused },
+						background = {
+							height = 25,
+							-- フォーカス中: 背景色あり、表示中のみ: 枠線のみ
+							border_color = ws_color,
+							border_width = 2,
+							color = is_focused and ws_color or colors.transparent,
+							corner_radius = 6,
+						},
+					})
 				end
 			end
 		end)
@@ -303,6 +450,8 @@ workspace_observer:subscribe("aerospace_workspace_change", function(env)
 	if not mapping_ready then return end
 	-- Workspace割り当てが変わった可能性があるため、表示を更新
 	update_workspace_visibility()
+	-- ハイライト更新（フォーカス中 + 表示中のworkspace）
+	update_workspace_highlight(env.FOCUSED_WORKSPACE)
 	-- アイコンも更新
 	update_workspace_icons()
 end)
@@ -310,134 +459,11 @@ end)
 -- 初回: マッピングを構築してから更新
 build_display_mapping(function()
 	update_workspace_visibility()
+	-- 初回のハイライト更新（フォーカス中workspaceを取得）
+	sbar.exec("aerospace list-workspaces --focused", function(focused)
+		focused = focused:gsub("%s+", "")
+		update_workspace_highlight(focused)
+	end)
 	update_workspace_icons()
 end)
 
-sbar.add("item", { width = 6 })
-
-local spaces_indicator = sbar.add("item", {
-	background = {
-		color = colors.with_alpha(colors.grey, 0.0),
-		border_color = colors.with_alpha(colors.bg1, 0.0),
-		border_width = 0,
-		corner_radius = 6,
-		height = 24,
-		padding_left = 6,
-		padding_right = 6,
-	},
-	icon = {
-		font = {
-			family = settings.font.text,
-			style = settings.font.style_map["Bold"],
-			size = 14.0,
-		},
-		padding_left = 6,
-		padding_right = 9,
-		color = colors.accent1,
-		string = icons.switch.on,
-	},
-	label = {
-		drawing = "off",
-		padding_left = 0,
-		padding_right = 0,
-	},
-})
-
-spaces_indicator:subscribe("swap_menus_and_spaces", function(env)
-	local currently_on = spaces_indicator:query().icon.value == icons.switch.on
-	spaces_indicator:set({
-		icon = currently_on and icons.switch.off or icons.switch.on,
-	})
-end)
-
-spaces_indicator:subscribe("mouse.entered", function(env)
-	sbar.animate("tanh", 30, function()
-		spaces_indicator:set({
-			background = {
-				-- color = { alpha = 1.0 },
-				color = colors.tn_black1,
-				border_color = { alpha = 1.0 },
-				padding_left = 6,
-				padding_right = 6,
-			},
-			icon = {
-				color = colors.accent1,
-				padding_left = 6,
-				padding_right = 9,
-			},
-			label = { drawing = "off" },
-			padding_left = 6,
-			padding_right = 6,
-		})
-	end)
-end)
-
-spaces_indicator:subscribe("mouse.exited", function(env)
-	sbar.animate("tanh", 30, function()
-		spaces_indicator:set({
-			background = {
-				color = { alpha = 0.0 },
-				border_color = { alpha = 0.0 },
-			},
-			icon = { color = colors.accent1 },
-			label = { width = 0 },
-		})
-	end)
-end)
-
-spaces_indicator:subscribe("mouse.clicked", function(env)
-	sbar.trigger("swap_menus_and_spaces")
-end)
-
-local front_app_icon = sbar.add("item", "front_app_icon", {
-	display = "active",
-	icon = { drawing = false },
-	label = {
-		font = "sketchybar-app-font-bg:Regular:21.0",
-	},
-	updates = true,
-	padding_right = 0,
-	padding_left = -10,
-})
-
--- disable front_app
--- local front_app = sbar.add("item", "front_app", {
--- 	display = "active",
--- 	icon = { drawing = false },
--- 	label = {
--- 		font = {
--- 			style = settings.font.style_map["Black"],
--- 			size = 12.0,
--- 		},
--- 	},
--- 	updates = true,
--- 	padding_right = 8,
--- 	padding_left = -6,
--- })
-
-front_app_icon:subscribe("front_app_switched", function(env)
-	sbar.exec("aerospace list-windows --focused --format '%{app-name}' 2>/dev/null | head -n 1", function(app_name)
-		app_name = app_name:gsub("^%s+", ""):gsub("%s+$", "") -- trim leading/trailing whitespace only
-		if app_name ~= "" then
-			local lookup = app_icons[app_name]
-			local icon = ((lookup == nil) and app_icons["default"] or lookup)
-			front_app_icon:set({ label = { string = icon, color = colors.accent1 } })
-		end
-	end)
-end)
-
--- front_app:subscribe("mouse.clicked", function(env)
--- 	sbar.trigger("swap_menus_and_spaces")
--- end)
-
-sbar.add("bracket", {
-	spaces_indicator.name,
-	front_app_icon.name,
-	-- front_app.name,
-}, {
-	background = {
-		color = colors.tn_black3,
-		border_color = colors.accent1,
-		border_width = 2,
-	},
-})
