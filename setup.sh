@@ -54,6 +54,7 @@ brew tap FelixKratz/formulae && brew install borders
 brew tap FelixKratz/formulae && brew install sketchybar
 
 # brew cask
+brew install --cask alt-tab
 brew install --cask docker
 brew install --cask ghostty
 brew install --cask raycast
