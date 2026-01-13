@@ -43,14 +43,8 @@ function gw() {
   fi
 }
 
-# fzf コマンド履歴検索
-function fzf-select-history() {
-    BUFFER=$(history -n 1 | fzf --query "$LBUFFER" --tac --no-sort --layout=reverse)
-    CURSOR=$#BUFFER
-    zle reset-prompt
-}
-zle -N fzf-select-history
-bindkey '^r' fzf-select-history
+# atuin - 高機能履歴管理（Ctrl+Rで起動）
+eval "$(atuin init zsh --disable-up-arrow)"
 
 # neovim のコンフィグファイルの設定 
 export XDG_CONFIG_HOME=$HOME/.config
@@ -70,6 +64,11 @@ export PATH="$HOME/bin:$PATH"
 # 色を使用
 autoload -Uz colors
 colors
+
+# Homebrew の補完を有効化
+if type brew &>/dev/null; then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
 
 # 補完
 autoload -Uz compinit

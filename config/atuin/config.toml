@@ -1,0 +1,83 @@
+## Atuin configuration file
+
+## 自動同期を無効化（ローカルのみで使用）
+auto_sync = false
+
+## 自動アップデートチェックを無効化
+update_check = false
+
+## ファジー検索モードを使用（最も柔軟）
+search_mode = "fuzzy"
+
+## グローバルフィルターモード（全履歴から検索）
+filter_mode = "global"
+
+## コンパクトスタイルでUIを表示
+style = "compact"
+
+## インターフェースの最大行数（0で全画面）
+inline_height = 15
+
+## UIを反転（検索バーを上に、候補を下に表示）
+invert = true
+
+## プレビューを表示
+show_preview = true
+
+## Enterで即実行、Tabでコマンドラインに挿入
+enter_accept = true
+
+## プレビューの最大高さ
+max_preview_height = 4
+
+## ヘルプ行を表示
+show_help = true
+
+## 日付フォーマット
+dialect = "uk"
+
+## タイムゾーン（日本時間）
+timezone = "+9"
+
+## 機密情報フィルター有効化
+secrets_filter = true
+
+## キーマップモード（自動検出）
+keymap_mode = "auto"
+
+[stats]
+## サブコマンドを統計に含めるコマンド
+common_subcommands = [
+  "apt",
+  "cargo",
+  "docker",
+  "git",
+  "go",
+  "kubectl",
+  "npm",
+  "pnpm",
+  "yarn",
+]
+
+## 統計から除外するプレフィックス
+common_prefix = ["sudo"]
+
+## 統計から完全に無視するコマンド
+ignored_commands = [
+  "cd",
+  "ls",
+  "la",
+  "ll",
+]
+
+[keys]
+## スクロールで終端に達したときにTUIを終了
+scroll_exits = true
+
+[sync]
+## Sync v2を有効化
+records = true
+
+[preview]
+## プレビュー高さの計算戦略（自動）
+strategy = "auto"

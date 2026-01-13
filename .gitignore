@@ -16,3 +16,6 @@
 # Backup files
 *.bak
 *~
+
+# karabiner
+config/karabiner/automatic_backups/

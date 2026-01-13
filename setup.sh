@@ -3,6 +3,7 @@ DOTFILES_DIR="$HOME/ghq/github.com/ytac8/dotfiles"
 
 ln -sf "$DOTFILES_DIR/.zshrc" ~/.zshrc
 ln -sf "$DOTFILES_DIR/config/aerospace" ~/.config/
+ln -sf "$DOTFILES_DIR/config/atuin" ~/.config/
 ln -sf "$DOTFILES_DIR/config/borders" ~/.config/
 ln -sf "$DOTFILES_DIR/config/ghostty" ~/.config/
 ln -sf "$DOTFILES_DIR/config/git" ~/.config/
@@ -12,6 +13,7 @@ ln -sf "$DOTFILES_DIR/config/pycodestyle" ~/.config/pycodestyle
 ln -sf "$DOTFILES_DIR/config/sketchybar" ~/.config/
 ln -sf "$DOTFILES_DIR/config/starship.toml" ~/.config/
 ln -sf "$DOTFILES_DIR/config/zellij" ~/.config/
+ln -sf "$DOTFILES_DIR/config/karabiner" ~/.config/
 
 # zplug install
 curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
@@ -22,6 +24,7 @@ curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/instal
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # brew install packages
+brew install atuin
 brew install btop
 brew install cmake
 brew install coreutils
@@ -57,6 +60,7 @@ brew tap FelixKratz/formulae && brew install sketchybar
 brew install --cask alt-tab
 brew install --cask docker
 brew install --cask ghostty
+brew install --cask karabiner-elements
 brew install --cask raycast
 brew install --cask nikitabobko/tap/aerospace
 
