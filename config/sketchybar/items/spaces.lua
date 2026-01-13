@@ -136,46 +136,31 @@ local workspaces = {}
 -- padding管理テーブル: workspace_paddings[display_id][workspace_name] = padding_item
 local workspace_paddings = {}
 
-local colors_spaces = {
-	[0] = colors.cmap_10,  -- workspace 0用
-	[1] = colors.cmap_1,
-	[2] = colors.cmap_2,
-	[3] = colors.cmap_3,
-	[4] = colors.cmap_4,
-	[5] = colors.cmap_5,
-	[6] = colors.cmap_6,
-	[7] = colors.cmap_7,
-	[8] = colors.cmap_8,
-	[9] = colors.cmap_9,
-}
+-- 統一されたworkspace色
+local workspace_color = colors.catppuccin_lavender
 
 -- spaces_indicator + front_app_icon (workspacesより前に配置)
 local spaces_indicator = sbar.add("item", {
 	background = {
-		color = colors.with_alpha(colors.grey, 0.0),
-		border_color = colors.with_alpha(colors.bg1, 0.0),
+		color = colors.transparent,
 		border_width = 0,
-		corner_radius = 6,
-		height = 24,
-		padding_left = 6,
-		padding_right = 6,
 	},
 	icon = {
 		font = {
 			family = settings.font.text,
-			style = settings.font.style_map["Bold"],
-			size = 14.0,
+			style = settings.font.style_map["Regular"],
+			size = 16.0,
 		},
-		padding_left = 6,
-		padding_right = 9,
-		color = colors.accent1,
+		padding_left = settings.paddings,
+		padding_right = settings.paddings,
+		color = colors.catppuccin_text,
 		string = icons.switch.on,
 	},
 	label = {
 		drawing = "off",
-		padding_left = 0,
-		padding_right = 0,
 	},
+	padding_left = settings.paddings,
+	padding_right = settings.paddings,
 })
 
 spaces_indicator:subscribe("swap_menus_and_spaces", function(env)
@@ -188,20 +173,9 @@ end)
 spaces_indicator:subscribe("mouse.entered", function(env)
 	sbar.animate("tanh", 30, function()
 		spaces_indicator:set({
-			background = {
-				color = colors.tn_black1,
-				border_color = { alpha = 1.0 },
-				padding_left = 6,
-				padding_right = 6,
-			},
 			icon = {
-				color = colors.accent1,
-				padding_left = 6,
-				padding_right = 9,
+				color = colors.catppuccin_lavender,
 			},
-			label = { drawing = "off" },
-			padding_left = 6,
-			padding_right = 6,
 		})
 	end)
 end)
@@ -209,12 +183,7 @@ end)
 spaces_indicator:subscribe("mouse.exited", function(env)
 	sbar.animate("tanh", 30, function()
 		spaces_indicator:set({
-			background = {
-				color = { alpha = 0.0 },
-				border_color = { alpha = 0.0 },
-			},
-			icon = { color = colors.accent1 },
-			label = { width = 0 },
+			icon = { color = colors.catppuccin_text },
 		})
 	end)
 end)
@@ -223,15 +192,7 @@ spaces_indicator:subscribe("mouse.clicked", function(env)
 	sbar.trigger("swap_menus_and_spaces")
 end)
 
-sbar.add("bracket", {
-	spaces_indicator.name,
-}, {
-	background = {
-		color = colors.tn_black3,
-		border_color = colors.accent1,
-		border_width = 2,
-	},
-})
+-- bracket removed as the indicator now has its own background
 
 sbar.add("item", { width = 18 })
 
@@ -248,28 +209,27 @@ for display_id = 1, num_displays do
 			icon = {
 				font = {
 					family = settings.font.numbers,
-					size = 14,
+					style = settings.font.style_map["Bold"],
+					size = 16.0,
 				},
 				string = ws_name,
-				padding_left = 5,
-				padding_right = 0,
-				color = colors_spaces[tonumber(ws_name)] or colors.grey,
-				highlight_color = colors.tn_black3,
+				padding_left = settings.paddings,
+				padding_right = 2,
+				color = workspace_color,
+				highlight_color = colors.catppuccin_base,
 			},
 			label = {
-				padding_right = 10,
-				padding_left = 3,
-				color = colors_spaces[tonumber(ws_name)] or colors.grey,
-				font = "sketchybar-app-font-bg:Regular:21.0",
+				padding_right = settings.paddings,
+				padding_left = settings.paddings,
+				color = workspace_color,
+				font = "sketchybar-app-font-bg:Regular:19.0",
 				y_offset = -2,
 			},
-			padding_right = 4,
-			padding_left = 4,
+			padding_right = settings.paddings,
+			padding_left = settings.paddings,
 			background = {
 				color = colors.transparent,
-				height = 22,
 				border_width = 0,
-				border_color = colors.transparent,
 			},
 		})
 
@@ -280,7 +240,7 @@ for display_id = 1, num_displays do
 			position = "left",
 			display = display_id,
 			drawing = false,  -- 初期状態は非表示
-			width = settings.group_paddings,
+			width = 4,
 		})
 
 		workspace_paddings[display_id][ws_name] = padding
@@ -352,7 +312,6 @@ done
 				-- ハイライト計算
 				local is_visible = (ws_name == visible_ws)
 				local is_focused = is_visible and (ws_name == focused_workspace)
-				local ws_color = colors_spaces[tonumber(ws_name)] or colors.grey
 
 				-- アイコン計算
 				local apps_str = workspace_apps[ws_name] or ""
@@ -368,18 +327,35 @@ done
 				end
 				if icon_line == "" then icon_line = "—" end
 
+				-- 背景設定（明示的にすべてのプロパティを設定）
+				local bg_config = {}
+				if is_visible then
+					-- visible（表示中）: 下にバーを表示
+					bg_config = {
+						color = workspace_color,
+						height = 2,
+						y_offset = -16,
+					}
+				else
+					-- 非表示: 透明
+					bg_config = {
+						color = colors.transparent,
+						height = 32,
+						y_offset = 0,
+					}
+				end
+
 				-- 一括設定
 				workspace_item:set({
 					drawing = should_show,
-					icon = { highlight = is_focused },
-					label = { string = icon_line, highlight = is_focused },
-					background = {
-						height = is_visible and 34 or 22,
-						border_color = is_visible and ws_color or colors.transparent,
-						border_width = is_visible and 2 or 0,
-						color = is_focused and ws_color or colors.transparent,
-						corner_radius = is_visible and 6 or 0,
+					icon = {
+						color = workspace_color,
 					},
+					label = {
+						string = icon_line,
+						color = workspace_color,
+					},
+					background = bg_config,
 				})
 
 				-- Padding更新

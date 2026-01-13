@@ -98,7 +98,7 @@ local wifi = sbar.add("item", "widgets.wifi.padding", {
 	padding_left = 4,
 })
 
--- Background around the item
+-- Background removed for cleaner look
 local wifi_bracket = sbar.add("bracket", "widgets.wifi.bracket", {
 	wifi.name,
 	wifi_up_graph.name,
@@ -106,11 +106,11 @@ local wifi_bracket = sbar.add("bracket", "widgets.wifi.bracket", {
 	wifi_down_graph.name,
 	wifi_down.name,
 }, {
-	background = { color = colors.tn_black3, border_color = colors.tn_magenta, border_width = 2 },
+	background = { color = colors.transparent, border_width = 0 },
 	popup = {
 		align = "center",
 		height = 30,
-		background = { color = colors.tn_black3, border_color = colors.tn_magenta, border_width = 2 },
+		background = { color = colors.catppuccin_surface0, border_color = colors.catppuccin_overlay0, border_width = 2 },
 	},
 })
 
@@ -322,4 +322,8 @@ ip:subscribe("mouse.clicked", copy_label_to_clipboard)
 mask:subscribe("mouse.clicked", copy_label_to_clipboard)
 router:subscribe("mouse.clicked", copy_label_to_clipboard)
 
-sbar.add("item", { position = "right", width = 6 })
+-- Spacing
+sbar.add("item", {
+	position = "right",
+	width = 8,
+})

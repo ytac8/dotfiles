@@ -44,10 +44,7 @@ local cpu = sbar.add("item", "widgets.cpu", {
 	padding_left = 5,
 })
 
--- Background around the cpu item
-local bracket = sbar.add("bracket", "widgets.cpu.bracket", { cpu_graph.name, cpu.name }, {
-	background = { color = colors.tn_black3, border_color = colors.blue },
-})
+-- Background removed for cleaner look
 
 cpu_graph:subscribe("cpu_update", function(env)
 	-- Also available: env.user_load, env.sys_load
@@ -82,15 +79,14 @@ cpu_graph:subscribe("cpu_update", function(env)
 		},
 		icon = { color = color },
 	})
-	bracket:set({ background = { border_color = color } })
 end)
 
 cpu:subscribe("mouse.clicked", function(env)
 	sbar.exec("open -a 'Activity Monitor'")
 end)
 
--- Background around the cpu item
-sbar.add("item", "widgets.cpu.padding", {
+-- Spacing
+sbar.add("item", {
 	position = "right",
-	width = settings.group_paddings,
+	width = 8,
 })

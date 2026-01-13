@@ -115,17 +115,8 @@ battery:subscribe("mouse.exited.global", function(env)
 	battery:set({ popup = { drawing = false } })
 end)
 
-sbar.add("bracket", "widgets.battery.bracket", { battery.name }, {
-	background = { color = colors.tn_black3, border_color = colors.tn_orange },
-})
-
--- sbar.add("item", "widgets.battery.padding", {
--- 	position = "right",
--- 	width = settings.group_paddings,
--- })
-
--- add padding
+-- Spacing
 sbar.add("item", {
 	position = "right",
-	width = 6,
+	width = 8,
 })

@@ -42,20 +42,18 @@ local volume_bracket = sbar.add("bracket", "widgets.volume.bracket", {
 	volume_icon.name,
 	volume_percent.name,
 }, {
-	background = { color = colors.tn_black3, border_color = colors.tn_green, border_width = 2 },
+	background = { color = colors.transparent, border_width = 0 },
 	popup = {
 		align = "center",
-		background = { color = colors.tn_black3, border_color = colors.tn_green, border_width = 2 },
+		background = { color = colors.catppuccin_surface0, border_color = colors.catppuccin_overlay0, border_width = 2 },
 	},
 })
 
--- sbar.add("item", "widgets.volume.padding", {
--- 	position = "right",
--- 	width = settings.group_paddings,
--- })
-
--- add width
-sbar.add("item", { position = "right", width = 6 })
+-- Spacing
+sbar.add("item", {
+	position = "right",
+	width = 8,
+})
 
 local volume_slider = sbar.add("slider", popup_width, {
 	position = "popup." .. volume_bracket.name,

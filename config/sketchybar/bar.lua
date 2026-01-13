@@ -5,7 +5,7 @@ sbar.bar({
 	-- topmost = "window",
 	height = 32,
 	margin = 0,
-	color = 0x0000000,
+	color = colors.catppuccin_base,
 	y_offset = 5,
 	padding_right = 8,
 	padding_left = 8,
