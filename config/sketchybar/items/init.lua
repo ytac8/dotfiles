@@ -1,4 +1,4 @@
-require("items.paw")
+require("items.reddit")
 require("items.spaces")
 require("items.menus")
 require("items.widgets")

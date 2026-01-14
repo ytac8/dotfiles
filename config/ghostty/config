@@ -4,7 +4,7 @@ theme = catppuccin-mocha
 
 # font
 font-family = MapleMono-NF-CN
-font-size = 18
+font-size = 16
 font-feature = -calt
 font-feature = -dlig
 # font-feature = -liga
