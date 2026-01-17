@@ -183,3 +183,8 @@ on-mode-changed = []
 # Notify sketchybar when windows are opened/closed
 [[on-window-detected]]
 run = 'exec-and-forget sketchybar --trigger aerospace_workspace_change'
+
+# システム設定をフローティングにする
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
