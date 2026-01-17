@@ -247,7 +247,7 @@ for display_id = 1, num_displays do
 end
 
 -- 統合更新関数: 1回のbash実行で全情報を取得し、visibility + highlight + iconsを更新
-local function update_all_workspaces()
+local function update_all_workspaces(skip_icons)
 	if not mapping_ready then return end
 
 	-- デバウンス: 更新中なら、更新完了後に再度更新をスケジュール
@@ -257,26 +257,37 @@ local function update_all_workspaces()
 	end
 	update_in_progress = true
 
-	-- 全情報を1回のbashスクリプトで取得（割り当て済みworkspaceのみアプリ情報取得）
-	local cmd = [[
+	-- 最適化されたbashスクリプト:
+	-- 1. モニター情報を並列取得
+	-- 2. ウィンドウ情報を1回で全取得
+	local cmd
+	if skip_icons then
+		-- ハイライト更新のみ（高速）- アイコン取得をスキップ
+		cmd = [[
 echo "FOCUSED:$(aerospace list-workspaces --focused 2>/dev/null | tr -d '\n')"
-assigned_ws=""
 for m in 1 2 3; do
-  echo "VISIBLE:$m:$(aerospace list-workspaces --monitor $m --visible 2>/dev/null | tr -d '\n')"
-  for ws in $(aerospace list-workspaces --monitor $m 2>/dev/null); do
-    [ -n "$ws" ] && echo "ASSIGNED:$m:$ws" && assigned_ws="$assigned_ws $ws"
-  done
+  { echo "VISIBLE:$m:$(aerospace list-workspaces --monitor $m --visible 2>/dev/null | tr -d '\n')"
+    aerospace list-workspaces --monitor $m 2>/dev/null | sed "s/^/ASSIGNED:$m:/" ; } &
 done
-for ws in $assigned_ws; do
-  apps=$(aerospace list-windows --workspace "$ws" --format '%{app-name}' 2>/dev/null | tr '\n' '|')
-  [ -n "$apps" ] && echo "APPS:$ws:$apps"
-done
+wait
 ]]
+	else
+		-- フル更新（アイコン含む）
+		cmd = [[
+echo "FOCUSED:$(aerospace list-workspaces --focused 2>/dev/null | tr -d '\n')"
+for m in 1 2 3; do
+  { echo "VISIBLE:$m:$(aerospace list-workspaces --monitor $m --visible 2>/dev/null | tr -d '\n')"
+    aerospace list-workspaces --monitor $m 2>/dev/null | sed "s/^/ASSIGNED:$m:/" ; } &
+done
+wait
+aerospace list-windows --all --format '%{workspace}|%{app-name}' 2>/dev/null | sed 's/^/APP:/'
+]]
+	end
 	sbar.exec(cmd, function(output)
 		local focused_workspace = ""
 		local monitor_visible = {}    -- monitor_id -> visible_workspace
 		local monitor_assigned = {}   -- monitor_id -> {workspace_name -> true}
-		local workspace_apps = {}     -- workspace_name -> "app1|app2|..."
+		local workspace_apps = {}     -- workspace_name -> {app_name -> true}
 
 		-- パース
 		for line in output:gmatch("[^\r\n]+") do
@@ -293,8 +304,12 @@ done
 				monitor_assigned[mid][ws] = true
 			end
 
-			local ws2, apps = line:match("^APPS:(.+):(.+)$")
-			if ws2 and apps then workspace_apps[ws2] = apps end
+			-- APP:workspace|app-name 形式（1行1アプリ）
+			local ws_app, app = line:match("^APP:([^|]+)|(.+)$")
+			if ws_app and app then
+				if not workspace_apps[ws_app] then workspace_apps[ws_app] = {} end
+				workspace_apps[ws_app][app] = true
+			end
 		end
 
 		-- 各ディスプレイを更新
@@ -313,13 +328,12 @@ done
 				local is_visible = (ws_name == visible_ws)
 				local is_focused = is_visible and (ws_name == focused_workspace)
 
-				-- アイコン計算
-				local apps_str = workspace_apps[ws_name] or ""
-				local icon_line = ""
-				local seen_apps = {}
-				for app in apps_str:gmatch("[^|]+") do
-					if app ~= "" and not seen_apps[app] then
-						seen_apps[app] = true
+				-- アイコン計算（skip_iconsの場合は既存のアイコンを維持）
+				local icon_line = nil
+				local apps_table = workspace_apps[ws_name]
+				if apps_table then
+					icon_line = ""
+					for app, _ in pairs(apps_table) do
 						local lookup = app_icons[app]
 						local icon = lookup or app_icons["default"]
 						icon_line = icon_line .. utf8.char(0x202F) .. icon
@@ -346,17 +360,21 @@ done
 				end
 
 				-- 一括設定
-				workspace_item:set({
+				local item_config = {
 					drawing = should_show,
 					icon = {
 						color = workspace_color,
 					},
-					label = {
+					background = bg_config,
+				}
+				-- アイコン情報がある場合のみlabelを更新（skip_icons時は既存を維持）
+				if icon_line then
+					item_config.label = {
 						string = icon_line,
 						color = workspace_color,
-					},
-					background = bg_config,
-				})
+					}
+				end
+				workspace_item:set(item_config)
 
 				-- Padding更新
 				local padding_item = workspace_paddings[display_id][ws_name]
@@ -370,18 +388,18 @@ done
 		update_in_progress = false
 		if update_pending then
 			update_pending = false
-			update_all_workspaces()
+			update_all_workspaces(false)  -- 保留中の更新は完全更新
 		end
 	end)
 end
 
 -- 互換性のための関数（統合関数を呼ぶだけ）
 local function update_workspace_visibility()
-	update_all_workspaces()
+	update_all_workspaces(false)
 end
 
 local function update_workspace_highlight(focused_workspace_hint)
-	update_all_workspaces()
+	update_all_workspaces(true)  -- ハイライトのみなら高速版
 end
 
 -- Window Icon更新関数（互換性のため残す、統合関数を呼ぶだけ）
@@ -402,7 +420,7 @@ workspace_observer:subscribe("aerospace_workspace_change", function(env)
 	local focused = env.FOCUSED_WORKSPACE
 	local prev = env.PREV_WORKSPACE
 	if focused and focused ~= "" then
-		-- 即座にハイライト状態を更新
+		-- 即座にハイライト状態を更新（同期処理、最速）
 		for display_id = 1, num_displays do
 			for ws_name, workspace_item in pairs(workspaces[display_id]) do
 				local is_focused = (ws_name == focused)
@@ -422,20 +440,23 @@ workspace_observer:subscribe("aerospace_workspace_change", function(env)
 			end
 		end
 	end
-	-- その後、詳細情報（アプリアイコンなど）を非同期で更新
-	update_all_workspaces()
+	-- ワークスペース変更時はアイコンなし高速更新、その後にアイコン更新をスケジュール
+	update_all_workspaces(true)
+	sbar.exec("sleep 0.3", function()
+		update_all_workspaces(false)
+	end)
 end)
 
--- front_app_switched: フォーカス移動時
+-- front_app_switched: フォーカス移動時（アプリ変更があるので完全更新）
 workspace_observer:subscribe("front_app_switched", function(env)
 	if not mapping_ready then return end
-	update_all_workspaces()
+	update_all_workspaces(false)
 end)
 
 -- system_woke: スリープ復帰時（マッピング再構築）
 workspace_observer:subscribe("system_woke", function(env)
 	build_display_mapping(function()
-		update_all_workspaces()
+		update_all_workspaces(false)
 	end)
 end)
 
@@ -447,17 +468,17 @@ workspace_observer:subscribe("display_change", function(env)
 		if count ~= last_display_count then
 			last_display_count = count
 			build_display_mapping(function()
-				update_all_workspaces()
+				update_all_workspaces(false)
 			end)
 		else
 			-- ディスプレイ数が変わっていない場合は更新のみ
-			update_all_workspaces()
+			update_all_workspaces(true)
 		end
 	end)
 end)
 
 -- 初回: マッピングを構築してから更新
 build_display_mapping(function()
-	update_all_workspaces()
+	update_all_workspaces(false)
 end)
 
