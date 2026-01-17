@@ -65,11 +65,11 @@ brew install --cask raycast
 brew install --cask nikitabobko/tap/aerospace
 
 # font
-sh install_font.sh
+bash install_font.sh
 
 # sketchybar
-./config/sketchybar/helpers/install.sh
-./config/sketchybar/icon_updater.sh
+bash ./config/sketchybar/helpers/install.sh
+bash ./config/sketchybar/icon_updater.sh
 
 # start services
 brew services start borders
