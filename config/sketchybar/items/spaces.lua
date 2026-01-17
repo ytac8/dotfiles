@@ -10,15 +10,18 @@ local app_icons = require("helpers.icon_map")
 -- 3. カスタムアイテムを使うことでaerospace workspace名への直接マッピングが可能
 --
 -- 動的検出方式:
--- - 全workspace（1-10, A-Z）を各ディスプレイ用に事前作成（初期状態は非表示）
+-- - 全workspace（0-9）を各ディスプレイ用に事前作成（初期状態は非表示）
 -- - aerospace list-workspaces --monitor Nで現在の割り当てを検出
 -- - 検出結果に基づいてdrawingプロパティを切り替え
 -- - 各ディスプレイ最大10個まで表示
 --
--- 動的マッピング:
--- - 起動時にaerospaceとmacOSのディスプレイ情報をクエリして自動的にマッピングを構築
--- - ディスプレイ名でマッチング（同名ディスプレイはdisplayIDの順序で対応）
--- - ディスプレイの接続順序が変わっても自動的に対応
+-- 動的マッピング (GitHub issue #607 の解決策に基づく):
+-- - sketchybar --query displays からarrangement-idとx座標を取得
+-- - NSScreenからx座標とnsscreen-id(index+1)を取得
+-- - aerospace list-monitors から monitor-idとnsscreen-idを取得
+-- - x座標でsketchybar displayとNSScreenをマッチング
+-- - nsscreen-idでaerospace monitorとマッチング
+-- - これによりディスプレイ名に依存せず、正確なマッピングが可能
 
 -- すべての可能なworkspace名
 local all_workspaces = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
@@ -29,104 +32,94 @@ local num_displays = 3
 -- sketchybar display番号 → aerospace monitor番号のマッピング（起動時に動的構築）
 local display_to_monitor = {}
 local mapping_ready = false
+local mapping_in_progress = false  -- マッピング構築中フラグ（同時実行防止）
+local last_display_count = 0  -- ディスプレイ数を記録して、変更時のみ再構築
+
+-- 更新中フラグ（デバウンス用）
+local update_in_progress = false
+local update_pending = false
 
 -- 動的マッピング構築関数
 local function build_display_mapping(callback)
-	-- sketchybarはdisplayIDの昇順でディスプレイを番号付け
-	-- aerospaceは独自の順序でmonitorを番号付け
-	-- 同名ディスプレイはdisplayID順 = aerospaceの(1)(2)サフィックス順で対応
+	-- 既にマッピング構築中なら、完了後にコールバックを呼ぶだけ
+	if mapping_in_progress then
+		-- 既存の処理が完了したら callback を呼ぶため、少し待ってから再試行
+		if callback then
+			sbar.exec("sleep 1", function() callback() end)
+		end
+		return
+	end
+	mapping_in_progress = true
+	-- 注意: 古いマッピングをクリアしない！新しいマッピングが準備できるまで古いものを使い続ける
+	-- これにより、非同期実行中に他のコールバックが空のマッピングを参照することを防ぐ
 
-	-- Step 1: macOS displays を取得（displayID順にソート）
-	local get_displays_script = [[python3 -c "
-import json,sys,subprocess
-result = subprocess.run(['system_profiler', 'SPDisplaysDataType', '-json'], capture_output=True, text=True)
-d = json.loads(result.stdout)
-displays = []
-for disp in d.get('SPDisplaysDataType', []):
-    for s in disp.get('spdisplays_ndrvs', []):
-        displays.append((int(s.get('_spdisplays_displayID', '0')), s.get('_name', '')))
-# Sort by displayID (sketchybar uses this order)
-displays.sort(key=lambda x: x[0])
-for did, name in displays:
-    print(name)
-" 2>/dev/null]]
+	-- ヘルパースクリプトを使って全情報を一度に取得
+	local script_path = os.getenv("HOME") .. "/.config/sketchybar/helpers/get_display_mapping.sh"
+	sbar.exec(script_path, function(output)
+		-- 新しいマッピングを別の変数で構築
+		local new_mapping = {}
 
-	sbar.exec(get_displays_script, function(macos_output)
-		-- Parse macOS displays in displayID order (= sketchybar display order)
-		local sketchybar_displays = {} -- index -> name
-		local sketchybar_by_name = {} -- name -> list of display indices
-		local idx = 1
+		-- sketchybar_displays[arrangement_id] = x座標
+		local sketchybar_displays = {}
+		-- nsscreen_by_x[x座標] = nsscreen-id
+		local nsscreen_by_x = {}
+		-- aerospace_by_nsscreen[nsscreen-id] = monitor-id
+		local aerospace_by_nsscreen = {}
 
-		for name in macos_output:gmatch("[^\r\n]+") do
-			if name ~= "" then
-				sketchybar_displays[idx] = name
-				if not sketchybar_by_name[name] then
-					sketchybar_by_name[name] = {}
+		local current_section = ""
+		local display_count = 0
+		for line in output:gmatch("[^\r\n]+") do
+			if line == "SKETCHYBAR" then
+				current_section = "sketchybar"
+			elseif line == "NSSCREEN" then
+				current_section = "nsscreen"
+			elseif line == "AEROSPACE" then
+				current_section = "aerospace"
+			else
+				if current_section == "sketchybar" then
+					local arr_id, x = line:match("(%d+)|([%-%.%d]+)")
+					if arr_id and x then
+						sketchybar_displays[tonumber(arr_id)] = math.floor(tonumber(x))
+						display_count = display_count + 1
+					end
+				elseif current_section == "nsscreen" then
+					local ns_id, x = line:match("(%d+)|([%-]?%d+)")
+					if ns_id and x then
+						nsscreen_by_x[tonumber(x)] = tonumber(ns_id)
+					end
+				elseif current_section == "aerospace" then
+					local mon_id, ns_id = line:match("(%d+)|(%d+)")
+					if mon_id and ns_id then
+						aerospace_by_nsscreen[tonumber(ns_id)] = tonumber(mon_id)
+					end
 				end
-				table.insert(sketchybar_by_name[name], idx)
-				idx = idx + 1
 			end
 		end
 
-		-- Step 2: aerospace monitors を取得
-		sbar.exec("aerospace list-monitors 2>/dev/null", function(aerospace_output)
-			-- Parse aerospace monitors
-			local aerospace_monitors = {} -- monitor_id -> name
-			local aerospace_by_basename = {} -- basename -> list of {id, suffix}
-
-			for line in aerospace_output:gmatch("[^\r\n]+") do
-				local monitor_id, name = line:match("(%d+)%s*|%s*(.+)")
-				if monitor_id and name then
-					monitor_id = tonumber(monitor_id)
-					aerospace_monitors[monitor_id] = name
-
-					-- Extract basename (remove " (N)" suffix)
-					local basename = name:match("^(.-)%s*%(%d+%)$") or name
-					local suffix = tonumber(name:match("%((%d+)%)$")) or 0
-
-					if not aerospace_by_basename[basename] then
-						aerospace_by_basename[basename] = {}
-					end
-					table.insert(aerospace_by_basename[basename], {id = monitor_id, suffix = suffix})
+		-- x座標でマッチングしてマッピングを構築
+		for arrangement_id, x in pairs(sketchybar_displays) do
+			local nsscreen_id = nsscreen_by_x[x]
+			if nsscreen_id then
+				local monitor_id = aerospace_by_nsscreen[nsscreen_id]
+				if monitor_id then
+					new_mapping[arrangement_id] = monitor_id
 				end
 			end
+		end
 
-			-- Sort aerospace monitors by suffix for each basename
-			for _, group in pairs(aerospace_by_basename) do
-				table.sort(group, function(a, b) return a.suffix < b.suffix end)
+		-- Fallback: fill any missing mappings with 1:1
+		for i = 1, num_displays do
+			if not new_mapping[i] then
+				new_mapping[i] = i
 			end
+		end
 
-			-- Step 3: Build mapping by matching names
-			for display_idx, display_name in pairs(sketchybar_displays) do
-				local matches = aerospace_by_basename[display_name]
-				if matches then
-					if #matches == 1 then
-						-- Unique name: direct match
-						display_to_monitor[display_idx] = matches[1].id
-					else
-						-- Multiple monitors with same name
-						-- Find this display's position among same-name displays
-						local same_name_displays = sketchybar_by_name[display_name]
-						for pos, d_idx in ipairs(same_name_displays) do
-							if d_idx == display_idx and matches[pos] then
-								display_to_monitor[display_idx] = matches[pos].id
-								break
-							end
-						end
-					end
-				end
-			end
-
-			-- Fallback: fill any missing mappings with 1:1
-			for i = 1, num_displays do
-				if not display_to_monitor[i] then
-					display_to_monitor[i] = i
-				end
-			end
-
-			mapping_ready = true
-			if callback then callback() end
-		end)
+		-- アトミックに置き換え（古いマッピングを新しいものに一括置換）
+		display_to_monitor = new_mapping
+		last_display_count = display_count
+		mapping_ready = true
+		mapping_in_progress = false
+		if callback then callback() end
 	end)
 end
 
@@ -257,6 +250,13 @@ end
 local function update_all_workspaces()
 	if not mapping_ready then return end
 
+	-- デバウンス: 更新中なら、更新完了後に再度更新をスケジュール
+	if update_in_progress then
+		update_pending = true
+		return
+	end
+	update_in_progress = true
+
 	-- 全情報を1回のbashスクリプトで取得（割り当て済みworkspaceのみアプリ情報取得）
 	local cmd = [[
 echo "FOCUSED:$(aerospace list-workspaces --focused 2>/dev/null | tr -d '\n')"
@@ -365,6 +365,13 @@ done
 				end
 			end
 		end
+
+		-- デバウンス完了処理
+		update_in_progress = false
+		if update_pending then
+			update_pending = false
+			update_all_workspaces()
+		end
 	end)
 end
 
@@ -391,6 +398,31 @@ local workspace_observer = sbar.add("item", {
 -- aerospace_workspace_change: workspace切り替え・移動時
 workspace_observer:subscribe("aerospace_workspace_change", function(env)
 	if not mapping_ready then return end
+	-- envからFOCUSED_WORKSPACEを取得して即座にハイライト更新（チラつき防止）
+	local focused = env.FOCUSED_WORKSPACE
+	local prev = env.PREV_WORKSPACE
+	if focused and focused ~= "" then
+		-- 即座にハイライト状態を更新
+		for display_id = 1, num_displays do
+			for ws_name, workspace_item in pairs(workspaces[display_id]) do
+				local is_focused = (ws_name == focused)
+				local was_focused = (ws_name == prev)
+				if is_focused or was_focused then
+					local bg_config = is_focused and {
+						color = workspace_color,
+						height = 2,
+						y_offset = -16,
+					} or {
+						color = colors.transparent,
+						height = 32,
+						y_offset = 0,
+					}
+					workspace_item:set({ background = bg_config })
+				end
+			end
+		end
+	end
+	-- その後、詳細情報（アプリアイコンなど）を非同期で更新
 	update_all_workspaces()
 end)
 
@@ -409,8 +441,18 @@ end)
 
 -- display_change: ディスプレイ接続/切断時（マッピング再構築）
 workspace_observer:subscribe("display_change", function(env)
-	build_display_mapping(function()
-		update_all_workspaces()
+	-- ディスプレイ数を確認して、変更があった場合のみ再構築
+	sbar.exec("sketchybar --query displays | grep -c 'arrangement-id'", function(count_str)
+		local count = tonumber(count_str) or 0
+		if count ~= last_display_count then
+			last_display_count = count
+			build_display_mapping(function()
+				update_all_workspaces()
+			end)
+		else
+			-- ディスプレイ数が変わっていない場合は更新のみ
+			update_all_workspaces()
+		end
 	end)
 end)
 
