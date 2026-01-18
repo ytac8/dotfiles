@@ -1,3 +1,19 @@
+# Parse command line arguments
+SKIP_FONTS=false
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --skip-fonts)
+      SKIP_FONTS=true
+      shift
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Usage: $0 [--skip-fonts]"
+      exit 1
+      ;;
+  esac
+done
+
 # Set symbolic link
 DOTFILES_DIR="$HOME/ghq/github.com/ytac8/dotfiles"
 
@@ -65,7 +81,11 @@ brew install --cask raycast
 brew install --cask nikitabobko/tap/aerospace
 
 # font
-bash install_font.sh
+if [ "$SKIP_FONTS" = false ]; then
+  bash install_font.sh
+else
+  echo "Skipping font installation..."
+fi
 
 # sketchybar
 bash ./config/sketchybar/helpers/install.sh
