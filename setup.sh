@@ -80,6 +80,14 @@ brew install --cask karabiner-elements
 brew install --cask raycast
 brew install --cask nikitabobko/tap/aerospace
 
+# git worktree runner
+(
+  git clone https://github.com/coderabbitai/git-worktree-runner.git /tmp/git-worktree-runner
+  cd /tmp/git-worktree-runner
+  ./install.sh
+  rm -rf /tmp/git-worktree-runner
+)
+
 # font
 if [ "$SKIP_FONTS" = false ]; then
   bash install_font.sh
