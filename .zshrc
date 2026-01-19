@@ -11,7 +11,8 @@ fi
 export AWS_REGION=ap-northeast-1
 export CLAUDE_CODE_USE_BEDROCK=1
 export DISABLE_PROMPT_CACHING=1
-export ANTHROPIC_MODEL='jp.anthropic.claude-sonnet-4-5-20250929-v1:0'
+# export ANTHROPIC_MODEL='jp.anthropic.claude-sonnet-4-5-20250929-v1:0'
+export ANTHROPIC_MODEL='global.anthropic.claude-opus-4-5-20251101-v1:0'
 
 # for CURSOR
 # export CURSOR_API_KEY=your_api_key_here  # Set your API key in ~/.zshrc.local
