@@ -38,7 +38,19 @@ alias g='cd $(ghq root)/$(ghq list | fzf --reverse)'
 alias gwr='git gtr'
 # git worktree 間移動
 function gw() {
-  local worktree_path=$(git worktree list | awk '{print $1}' | fzf --reverse --preview 'git -C {} log --oneline -10 --color=always' --preview-window=down:40% --bind 'ctrl-/:toggle-preview')
+  local worktree_path=$(git worktree list | awk '{
+    path=$1
+    branch=$3
+    gsub(/\[|\]/, "", branch)
+    n=split(path, parts, "/")
+    short_path=parts[n]
+    printf "%s\t%s\t%s\n", branch, short_path, path
+  }' | fzf --reverse \
+    --with-nth=1,2 \
+    --delimiter='\t' \
+    --preview 'git -C {3} log --oneline -10 --color=always' \
+    --preview-window=down:40% \
+    --bind 'ctrl-/:toggle-preview' | cut -f3)
   if [ -n "$worktree_path" ]; then
     cd "$worktree_path"
   fi

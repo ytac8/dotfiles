@@ -17,19 +17,27 @@ done
 # Set symbolic link
 DOTFILES_DIR="$HOME/ghq/github.com/ytac8/dotfiles"
 
+# Helper function to create symlink (removes existing dir/file first)
+link_config() {
+  local src="$1"
+  local dest="$2"
+  rm -rf "$dest"
+  ln -sf "$src" "$dest"
+}
+
 ln -sf "$DOTFILES_DIR/.zshrc" ~/.zshrc
-ln -sf "$DOTFILES_DIR/config/aerospace" ~/.config/
-ln -sf "$DOTFILES_DIR/config/atuin" ~/.config/
-ln -sf "$DOTFILES_DIR/config/borders" ~/.config/
-ln -sf "$DOTFILES_DIR/config/ghostty" ~/.config/
-ln -sf "$DOTFILES_DIR/config/git" ~/.config/
-ln -sf "$DOTFILES_DIR/config/mise" ~/.config/
-ln -sf "$DOTFILES_DIR/config/nvim" ~/.config/
-ln -sf "$DOTFILES_DIR/config/pycodestyle" ~/.config/pycodestyle
-ln -sf "$DOTFILES_DIR/config/sketchybar" ~/.config/
-ln -sf "$DOTFILES_DIR/config/starship.toml" ~/.config/
-ln -sf "$DOTFILES_DIR/config/zellij" ~/.config/
-ln -sf "$DOTFILES_DIR/config/karabiner" ~/.config/
+link_config "$DOTFILES_DIR/config/aerospace" ~/.config/aerospace
+link_config "$DOTFILES_DIR/config/atuin" ~/.config/atuin
+link_config "$DOTFILES_DIR/config/borders" ~/.config/borders
+link_config "$DOTFILES_DIR/config/ghostty" ~/.config/ghostty
+link_config "$DOTFILES_DIR/config/git" ~/.config/git
+link_config "$DOTFILES_DIR/config/mise" ~/.config/mise
+link_config "$DOTFILES_DIR/config/nvim" ~/.config/nvim
+link_config "$DOTFILES_DIR/config/pycodestyle" ~/.config/pycodestyle
+link_config "$DOTFILES_DIR/config/sketchybar" ~/.config/sketchybar
+link_config "$DOTFILES_DIR/config/starship.toml" ~/.config/starship.toml
+link_config "$DOTFILES_DIR/config/zellij" ~/.config/zellij
+link_config "$DOTFILES_DIR/config/karabiner" ~/.config/karabiner
 
 # zplug install
 curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
