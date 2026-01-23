@@ -1,0 +1,14 @@
+[user]
+  useConfigOnly = true
+[includeIf "gitdir:~/ghq/github.com/"]
+    path = ~/.config/git/config-github
+[includeIf "gitdir:~/ghq/ghe.misosiru.io/"]
+    path = ~/.config/git/config-ghe
+[includeIf "gitdir:~/ghq/gitlab.dev-dsg-infra.com/"]
+    path = ~/.config/git/config-gitlab
+[gtr "ai"]
+	default = cursor
+[gtr "editor"]
+	default = nvim
+[gtr "worktrees"]
+	dir = .worktrees
