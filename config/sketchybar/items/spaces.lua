@@ -362,25 +362,22 @@ workspace_observer:subscribe("aerospace_workspace_change", function(env)
 	if not mapping_ready then return end
 	-- envからFOCUSED_WORKSPACEを取得して即座にハイライト更新（チラつき防止）
 	local focused = env.FOCUSED_WORKSPACE
-	local prev = env.PREV_WORKSPACE
 	if focused and focused ~= "" then
 		-- 即座にハイライト状態を更新（同期処理、最速）
+		-- 全ワークスペースを走査して、focusedでないものはハイライトを消す
 		for display_id = 1, num_displays do
 			for ws_name, workspace_item in pairs(workspaces[display_id]) do
 				local is_focused = (ws_name == focused)
-				local was_focused = (ws_name == prev)
-				if is_focused or was_focused then
-					local bg_config = is_focused and {
-						color = workspace_color,
-						height = 2,
-						y_offset = -16,
-					} or {
-						color = colors.transparent,
-						height = 32,
-						y_offset = 0,
-					}
-					workspace_item:set({ background = bg_config })
-				end
+				local bg_config = is_focused and {
+					color = workspace_color,
+					height = 2,
+					y_offset = -16,
+				} or {
+					color = colors.transparent,
+					height = 32,
+					y_offset = 0,
+				}
+				workspace_item:set({ background = bg_config })
 			end
 		end
 	end
@@ -422,7 +419,10 @@ workspace_observer:subscribe("display_change", function(env)
 end)
 
 -- 初回: マッピングを構築してから更新
-build_display_mapping(function()
-	update_all_workspaces(false)
+-- reload時はsketchybarの内部状態が安定するまで少し待つ
+sbar.exec("sleep 0.5", function()
+	build_display_mapping(function()
+		update_all_workspaces(false)
+	end)
 end)
 
