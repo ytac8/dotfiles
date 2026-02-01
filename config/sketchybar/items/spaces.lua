@@ -360,28 +360,9 @@ local workspace_observer = sbar.add("item", {
 -- aerospace_workspace_change: workspace切り替え・移動時
 workspace_observer:subscribe("aerospace_workspace_change", function(env)
 	if not mapping_ready then return end
-	-- envからFOCUSED_WORKSPACEを取得して即座にハイライト更新（チラつき防止）
-	local focused = env.FOCUSED_WORKSPACE
-	if focused and focused ~= "" then
-		-- 即座にハイライト状態を更新（同期処理、最速）
-		-- 全ワークスペースを走査して、focusedでないものはハイライトを消す
-		for display_id = 1, num_displays do
-			for ws_name, workspace_item in pairs(workspaces[display_id]) do
-				local is_focused = (ws_name == focused)
-				local bg_config = is_focused and {
-					color = workspace_color,
-					height = 2,
-					y_offset = -16,
-				} or {
-					color = colors.transparent,
-					height = 32,
-					y_offset = 0,
-				}
-				workspace_item:set({ background = bg_config })
-			end
-		end
-	end
-	-- ワークスペース変更時はアイコンなし高速更新、その後にアイコン更新をスケジュール
+	-- 即時ハイライト更新を削除: focusedだけでハイライトすると、
+	-- 他のディスプレイのvisibleワークスペースのハイライトも消えてしまう問題があった
+	-- update_all_workspacesで正しくvisibleを考慮した更新を行う
 	update_all_workspaces(true)
 	sbar.exec("sleep 0.3", function()
 		update_all_workspaces(false)
@@ -395,9 +376,22 @@ workspace_observer:subscribe("front_app_switched", function(env)
 end)
 
 -- system_woke: スリープ復帰時（マッピング再構築）
+-- スリープ復帰直後はシステムが不安定なため、遅延とリトライを追加
 workspace_observer:subscribe("system_woke", function(env)
-	build_display_mapping(function()
-		update_all_workspaces(false)
+	-- フラグをリセット（スリープ中にスタックした可能性があるため）
+	mapping_in_progress = false
+	update_in_progress = false
+	update_pending = false
+
+	-- 復帰直後は不安定なので少し待つ
+	sbar.exec("sleep 2", function()
+		build_display_mapping(function()
+			update_all_workspaces(false)
+		end)
+		-- 念のためもう一度更新（aerospaceの起動が遅れる場合に備えて）
+		sbar.exec("sleep 3", function()
+			update_all_workspaces(false)
+		end)
 	end)
 end)
 
