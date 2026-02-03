@@ -73,6 +73,7 @@ brew install rcm
 brew install ripgrep
 brew install slack
 brew install starship
+brew install terminal-notifier
 brew install zellij
 brew install zoxide
 
