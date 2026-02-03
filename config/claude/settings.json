@@ -1,0 +1,61 @@
+{
+    "model": "global.anthropic.claude-opus-4-5-20251101-v1:0",
+    "permissions": {
+        "allow": [
+            "Bash(ls:*)",
+            "Bash(cat:*)",
+            "Bash(echo:*)",
+            "Bash(touch:*)",
+            "Bash(mkdir:*)",
+            "Bash(cp:*)",
+            "Read",
+            "Edit",
+            "Write"
+        ],
+        "deny": [
+            "Bash(sudo:*)",
+            "Bash(rm -rf:*)",
+            "Bash(git reset:*)",
+            "Bash(git rebase:*)",
+            "Bash(wget:*)",
+            "Read(**/.env*)",
+            "Read(id_rsa)",
+            "Read(id_ed25519)",
+            "Read(**/*token*)",
+            "Read(**/*key*)",
+            "Write(**/.env*)",
+            "Write(**/secrets/**)"
+        ],
+        "ask": [
+            "Bash(rm:*)",
+            "Bash(mv:*)",
+            "Bash(curl:*)",
+            "Bash(git add:*)",
+            "Bash(git commit:*)",
+            "Bash(git push:*)",
+            "Bash(git merge:*)"
+        ]
+    },
+    "hooks": {
+        "Notification": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "terminal-notifier -title 'Waiting User...' -message \"$(basename \"$PWD\")\" -activate 'com.mitchellh.ghostty' & afplay /System/Library/Sounds/Submarine.aiff"
+                    }
+                ]
+            }
+        ],
+        "Stop": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "terminal-notifier -title 'Completed!' -message \"$(basename \"$PWD\")\" -activate 'com.mitchellh.ghostty' & afplay /System/Library/Sounds/Submarine.aiff"
+                    }
+                ]
+            }
+        ]
+    }
+}
